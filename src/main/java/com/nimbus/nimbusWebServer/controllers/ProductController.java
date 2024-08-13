@@ -1,7 +1,7 @@
 package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.ProductDto;
-import com.nimbus.nimbusWebServer.models.ProductModel;
+import com.nimbus.nimbusWebServer.models.ProdutoModel;
 import com.nimbus.nimbusWebServer.repositories.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -22,20 +22,20 @@ public class ProductController {
     ProductRepository productRepository;
 
     @PostMapping("/save_product")
-    public ResponseEntity<ProductModel> saveProduct(@RequestBody @Valid ProductDto productDto){
-        var productModel = new ProductModel();
+    public ResponseEntity<ProdutoModel> saveProduct(@RequestBody @Valid ProductDto productDto){
+        var productModel = new ProdutoModel();
         BeanUtils.copyProperties(productDto, productModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(productRepository.save(productModel));
     }
 
     @GetMapping("/get_all_products")
-    public ResponseEntity<List<ProductModel>> getAllProducts(){
+    public ResponseEntity<List<ProdutoModel>> getAllProducts(){
         return ResponseEntity.status(HttpStatus.OK).body(productRepository.findAll());
     }
 
     @GetMapping("/get_product/{id}")
     public ResponseEntity<Object> getOneProduct(@PathVariable(value = "id") UUID id){
-        Optional<ProductModel> product = productRepository.findById(id);
+        Optional<ProdutoModel> product = productRepository.findById(id);
         if(product.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
         }
@@ -44,7 +44,7 @@ public class ProductController {
 
     @PutMapping("/update_product/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "id") UUID id, @RequestBody @Valid ProductDto productDto){
-        Optional<ProductModel> product = productRepository.findById(id);
+        Optional<ProdutoModel> product = productRepository.findById(id);
         if(product.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
         }
@@ -55,7 +55,7 @@ public class ProductController {
 
     @DeleteMapping("/delete_product/{id}")
     public ResponseEntity<Object> deleteProduct(@PathVariable(value = "id") UUID id){
-        Optional<ProductModel> product = productRepository.findById(id);
+        Optional<ProdutoModel> product = productRepository.findById(id);
         if (product.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
         }
