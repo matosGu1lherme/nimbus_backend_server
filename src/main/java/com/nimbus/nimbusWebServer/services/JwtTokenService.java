@@ -8,9 +8,7 @@ import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 
 @Service
 public class JwtTokenService {
@@ -52,7 +50,7 @@ public class JwtTokenService {
         return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant();
     }
 
-    private Instant expirationDate() {
-        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).plusHours(4).toInstant();
+    private Instant expirationDate(){
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }

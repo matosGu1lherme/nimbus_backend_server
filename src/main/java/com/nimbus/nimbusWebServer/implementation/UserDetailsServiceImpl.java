@@ -1,24 +1,22 @@
-package com.nimbus.nimbusWebServer.services;
+package com.nimbus.nimbusWebServer.implementation;
 
-import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import com.nimbus.nimbusWebServer.models.UserModel;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-public class UserDetailsImplService implements UserDetailsService {
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
 
-    /*
-        loadUserByUsername é usado pelo spring e é reponsavel por retornar um UserDetails
-        com base no nome de usuario fornecido
-    */
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel userModel = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException(("Usuario não encontrado.")));
+        UserModel userModel = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         return new UserDetailsImpl(userModel);
     }
 }
