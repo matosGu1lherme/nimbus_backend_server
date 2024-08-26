@@ -3,6 +3,7 @@ package com.nimbus.nimbusWebServer.controllers;
 import com.nimbus.nimbusWebServer.dtos.ProductDto;
 import com.nimbus.nimbusWebServer.models.ProdutoModel;
 import com.nimbus.nimbusWebServer.repositories.ProductRepository;
+import com.nimbus.nimbusWebServer.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class ProductController {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    ProductService productService;
+
     @PostMapping("/save_product")
-    public ResponseEntity<ProdutoModel> saveProduct(@RequestBody @Valid ProductDto productDto){
-        var productModel = new ProdutoModel();
-        BeanUtils.copyProperties(productDto, productModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productRepository.save(productModel));
+    public ResponseEntity<String> saveProduct(@RequestBody @Valid ProductDto productDto){
+        productService.saveProduct(productDto);
+        return new ResponseEntity<>("Produto salvo com sucesso!", HttpStatus.CREATED);
     }
 
     @GetMapping("/get_all_products")

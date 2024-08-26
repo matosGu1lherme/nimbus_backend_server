@@ -12,14 +12,14 @@ import java.util.UUID;
 @Table(name = "PRODUTOS")
 @Getter
 @Setter
-@ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProdutoModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.UUID)
     @Column(name = "id_produto")
     private UUID id_produto;
     @Column(name = "nome_produto")

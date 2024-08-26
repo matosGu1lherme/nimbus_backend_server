@@ -4,20 +4,23 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Table(name = "PRODUTO_IMAGENS")
 @Getter
 @Setter
-@ToString
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductImagesModel implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id_image;
+
     @ManyToOne
-    @MapsId
-    @JoinColumn(name = "id_produto")
+    @JoinColumn(name = "id_produto", referencedColumnName = "id_produto")
     private ProdutoModel produto;
 
     @Column(name = "ordem_apresentacao")
