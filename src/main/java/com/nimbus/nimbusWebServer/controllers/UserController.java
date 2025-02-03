@@ -23,7 +23,7 @@ public class UserController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Void> createUser(@RequestBody CreateUserDto createUserDto) {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
