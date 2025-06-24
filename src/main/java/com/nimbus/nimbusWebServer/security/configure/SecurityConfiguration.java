@@ -32,7 +32,7 @@ public class SecurityConfiguration {
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
     public static final String [] ENDPOINTS_CUSTOMER = {
-            "/users/test/customer"
+            "/users/test/**"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador

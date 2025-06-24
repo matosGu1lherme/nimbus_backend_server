@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.implementation;
 
-import com.nimbus.nimbusWebServer.models.UserModel;
+import com.nimbus.nimbusWebServer.models.user.UserModel;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

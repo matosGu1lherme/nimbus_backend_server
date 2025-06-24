@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.implementation;
 
-import com.nimbus.nimbusWebServer.models.UserModel;
+import com.nimbus.nimbusWebServer.models.user.UserModel;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

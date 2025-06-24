@@ -1,7 +1,7 @@
 package com.nimbus.nimbusWebServer.security.configure;
 
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
-import com.nimbus.nimbusWebServer.models.UserModel;
+import com.nimbus.nimbusWebServer.models.user.UserModel;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.JwtTokenService;
 import jakarta.servlet.FilterChain;

@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.repositories;
 
-import com.nimbus.nimbusWebServer.models.ProdutoModel;
+import com.nimbus.nimbusWebServer.models.produtos.ProdutoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

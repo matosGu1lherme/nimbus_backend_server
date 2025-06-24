@@ -4,7 +4,7 @@ import com.nimbus.nimbusWebServer.dtos.CreateUserDto;
 import com.nimbus.nimbusWebServer.dtos.LoginUserDto;
 import com.nimbus.nimbusWebServer.dtos.RecoveryJwtTokenDto;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
-import com.nimbus.nimbusWebServer.models.UserModel;
+import com.nimbus.nimbusWebServer.models.user.UserModel;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.security.configure.SecurityConfiguration;
 import com.nimbus.nimbusWebServer.security.roles.Role;
@@ -50,10 +50,11 @@ public class UserService {
 
         // Cria um novo usuário com os dados fornecidos
         UserModel newUser = UserModel.builder()
+                .nome(createUserDto.nome())
                 .email(createUserDto.email())
-                // Codifica a senha do usuário com o algoritmo bcrypt
                 .password(securityConfiguration.passwordEncoder().encode(createUserDto.password()))
-                // Atribui ao usuário uma permissão específica
+                .cpf(createUserDto.cpf())
+                .data_nascimento(createUserDto.data_nascimento())
                 .roles(List.of(Role.builder().name(createUserDto.role()).build()))
                 .build();
 
