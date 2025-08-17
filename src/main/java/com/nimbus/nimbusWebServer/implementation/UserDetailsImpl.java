@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.implementation;
 
-import com.nimbus.nimbusWebServer.models.user.UserModel;
+import com.nimbus.nimbusWebServer.models.user.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
-    private UserModel userModel;// Classe de usuário que criamos anteriormente
+    private User user;// Classe de usuário que criamos anteriormente
 
-    public UserDetailsImpl(UserModel userModel) {
-        this.userModel = userModel;
+    public UserDetailsImpl(User user) {
+        this.user = user;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class UserDetailsImpl implements UserDetails {
          novo SimpleGrantedAuthority, que é uma implementação simples de
          GrantedAuthority
         */
-        return userModel.getRoles()
+        return user.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
@@ -35,12 +35,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userModel.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userModel.getEmail(); // Retorna a credencial do usuário que criamos anteriormente
+        return user.getEmail(); // Retorna a credencial do usuário que criamos anteriormente
     }
 
     @Override

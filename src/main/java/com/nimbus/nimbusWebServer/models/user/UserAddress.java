@@ -12,14 +12,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAddressModel {
+public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserModel user;
+    private User user;
 
     private String lagradouro;
 

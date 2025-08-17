@@ -17,7 +17,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class UserModel {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,5 +42,5 @@ public class UserModel {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAddressModel> enderecos = new ArrayList<>();
+    private List<UserAddress> enderecos = new ArrayList<>();
 }

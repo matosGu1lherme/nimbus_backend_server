@@ -4,7 +4,7 @@ import com.nimbus.nimbusWebServer.dtos.CreateUserDto;
 import com.nimbus.nimbusWebServer.dtos.LoginUserDto;
 import com.nimbus.nimbusWebServer.dtos.RecoveryJwtTokenDto;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
-import com.nimbus.nimbusWebServer.models.user.UserModel;
+import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.security.configure.SecurityConfiguration;
 import com.nimbus.nimbusWebServer.security.roles.Role;
@@ -49,7 +49,7 @@ public class UserService {
     public void createUser(CreateUserDto createUserDto) {
 
         // Cria um novo usuário com os dados fornecidos
-        UserModel newUser = UserModel.builder()
+        User newUser = User.builder()
                 .nome(createUserDto.nome())
                 .email(createUserDto.email())
                 .password(securityConfiguration.passwordEncoder().encode(createUserDto.password()))

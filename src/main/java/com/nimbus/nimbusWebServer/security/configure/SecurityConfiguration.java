@@ -21,8 +21,12 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/users/login", //url que usaremos para fazer login
-            "/users/register" //url que usaremos para criar um usuário
+            "/users/login", //url para fazer login
+            "/users/register", //url para criar um usuário
+
+            "/categoria/**",
+            "/categoria/listar_categorias",
+            "/teste/**" //endpoint para testes
     };
 
     // Endpoints que requerem autenticação para serem acessados
