@@ -7,7 +7,6 @@ public record ProdutoRequestDto(
         String nome,
         String descricao,
         BigDecimal preco,
-        String sku,
         Long categoriaId,
         List<Long> tagIds,
         List<String> images,

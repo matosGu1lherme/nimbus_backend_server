@@ -29,8 +29,11 @@ public class ProdutoService {
         produto.setNome(dto.nome());
         produto.setDescricao(dto.descricao());
         produto.setPreco(dto.preco());
-        produto.setSku(dto.sku());
 
         return produtoRepository.save(produto);
+    }
+
+    public String gerarProdutoSKU() {
+        return "kk";
     }
 }

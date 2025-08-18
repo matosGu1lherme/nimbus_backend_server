@@ -26,6 +26,7 @@ public class SecurityConfiguration {
 
             "/categoria/**",
             "/categoria/listar_categorias",
+            "/tipo/salvar_tipo",
             "/teste/**" //endpoint para testes
     };
 

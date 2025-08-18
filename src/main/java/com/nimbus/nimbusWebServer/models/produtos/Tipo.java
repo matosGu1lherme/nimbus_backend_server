@@ -6,14 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "CATEGORIA")
+@Table(name = "TIPO")
 @Getter
 @Setter
-public class Categoria {
+public class Tipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +26,9 @@ public class Categoria {
     @Column(length = 3, nullable = false, unique = true)
     private String abreviacao;
 
-    @NotNull
     @Column(nullable = false)
-    private Boolean ativo;
+    private boolean ativo;
 
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "tipo")
     private List<Produto> produtos;
-
-    private LocalDateTime criadoEm = LocalDateTime.now();
 }

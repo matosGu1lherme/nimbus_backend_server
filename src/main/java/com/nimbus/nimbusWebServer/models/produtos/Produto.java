@@ -1,6 +1,7 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "PRODUTO")
@@ -20,19 +20,30 @@ public class Produto implements Serializable {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Column(nullable = false)
     private String nome;
 
     private String descricao;
 
-    @Column(precision = 10, scale = 2)
+    @NotNull
+    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal preco;
 
-    @Column(unique = true)
+    @NotNull
+    @Column(unique = true, nullable = false)
     private String sku;
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Imagem> imagens = new ArrayList<>();
 
+    @NotNull
+    @JoinColumn(name = "tipo_id", nullable = false)
+    @ManyToOne
+    private Tipo tipo;
+
+    @NotNull
+    @JoinColumn(name = "categoria_id", nullable = false)
     @ManyToOne
     private Categoria categoria;
 
