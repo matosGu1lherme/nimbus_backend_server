@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,4 +32,6 @@ public class Tipo {
 
     @OneToMany(mappedBy = "tipo")
     private List<Produto> produtos;
+
+    private LocalDateTime criadoEm = LocalDateTime.now();
 }
