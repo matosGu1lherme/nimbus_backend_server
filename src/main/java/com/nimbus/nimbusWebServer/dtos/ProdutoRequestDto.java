@@ -7,8 +7,6 @@ public record ProdutoRequestDto(
         String nome,
         String descricao,
         BigDecimal preco,
-        Long categoriaId,
-        List<Long> tagIds,
-        List<String> images,
-        Long estoqueId
+        Long tipo_id,
+        Long categoria_id
 ) { }

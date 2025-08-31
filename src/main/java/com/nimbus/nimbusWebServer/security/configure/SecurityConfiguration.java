@@ -28,7 +28,8 @@ public class SecurityConfiguration {
             "/categoria/listar_categorias",
             "/tipo/salvar_tipo",
             "/tipo/listar_tipos",
-            "/teste/**" //endpoint para testes
+            "/teste/**",
+            "/produto/salvar_produto"
     };
 
     // Endpoints que requerem autenticação para serem acessados

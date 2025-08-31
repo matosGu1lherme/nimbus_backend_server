@@ -35,7 +35,7 @@ public class Produto implements Serializable {
     private String sku;
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Imagem> imagens = new ArrayList<>();
+    public List<ImagemProduto> imagens = new ArrayList<>();
 
     @NotNull
     @JoinColumn(name = "tipo_id", nullable = false)

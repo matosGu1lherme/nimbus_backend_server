@@ -2,10 +2,15 @@ package com.nimbus.nimbusWebServer.models.produtos;
 
 import com.nimbus.nimbusWebServer.models.produtos.id.ImagemId;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table(name = "IMAGEM_PRODUTO")
-public class Imagem {
+@Table(name = "PRODUTO_IMAGEM")
+@Getter
+@Setter
+public class ImagemProduto {
     @EmbeddedId
     private ImagemId id;
 

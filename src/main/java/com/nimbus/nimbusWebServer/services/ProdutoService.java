@@ -1,39 +1,105 @@
 package com.nimbus.nimbusWebServer.services;
 
 import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
+import com.nimbus.nimbusWebServer.exception.customException.RecursoNaoEncontradoException;
+import com.nimbus.nimbusWebServer.models.produtos.Categoria;
+import com.nimbus.nimbusWebServer.models.produtos.ImagemProduto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
-import com.nimbus.nimbusWebServer.repositories.CategoriaRepository;
-import com.nimbus.nimbusWebServer.repositories.ProdutoRepository;
-import com.nimbus.nimbusWebServer.repositories.TagRepository;
+import com.nimbus.nimbusWebServer.models.produtos.Tipo;
+import com.nimbus.nimbusWebServer.models.produtos.id.ImagemId;
+import com.nimbus.nimbusWebServer.repositories.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
+    private final TipoRepository tipoRepository;
     private final CategoriaRepository categoriaRepository;
     private final TagRepository tagRepository;
+    private final SkuSequenceService skuSequenceService;
+    private final StorageService storageService;
+    private final ImagemProdutoRepository imagemProdutoRepository;
 
     public ProdutoService(
             ProdutoRepository produtoRepository,
+            TipoRepository tipoRepository,
             CategoriaRepository categoriaRepository,
-            TagRepository tagRepository
+            TagRepository tagRepository,
+            SkuSequenceService skuSequenceService,
+            StorageService storageService,
+            ImagemProdutoRepository imagemProdutoRepository
     ) {
         this.produtoRepository = produtoRepository;
+        this.tipoRepository = tipoRepository;
         this.categoriaRepository = categoriaRepository;
         this.tagRepository = tagRepository;
+        this.skuSequenceService = skuSequenceService;
+        this.storageService = storageService;
+        this.imagemProdutoRepository = imagemProdutoRepository;
     }
 
-    public Produto salvarProduto(ProdutoRequestDto dto) {
-        Produto produto = new Produto();
-        produto.setNome(dto.nome());
-        produto.setDescricao(dto.descricao());
-        produto.setPreco(dto.preco());
+    @Transactional
+    public void salvarProduto(ProdutoRequestDto produto, MultipartFile[] imagensProduto) {
+        Produto novoProduto =  new Produto();
+        novoProduto.setNome(produto.nome());
+        novoProduto.setPreco(produto.preco());
+        novoProduto.setDescricao(produto.descricao());
+        novoProduto.setTipo(tipoRepository.findById(produto.tipo_id())
+                .orElseThrow(() -> new NoSuchElementException("Tipo com ID " + produto.tipo_id() + " não encontrado.")));
+        novoProduto.setCategoria(categoriaRepository.findById(produto.categoria_id())
+                .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + produto.categoria_id() + " não encontrado.")));
+        novoProduto.setSku(gerarProdutoSKU(novoProduto));
 
-        return produtoRepository.save(produto);
+        novoProduto = produtoRepository.save(novoProduto);
+
+        List<ImagemProduto> imagensProdutoList= new ArrayList<>();
+
+        Integer sequence = 1;
+        for (MultipartFile imagem : imagensProduto) {
+            try {
+                String filename = storageService.store(imagem);
+
+                ImagemId imagemId = new ImagemId(novoProduto.getId(), sequence);
+                sequence++;
+                ImagemProduto novoImgPrdVinculo = new ImagemProduto();
+                novoImgPrdVinculo.setId(imagemId);
+                novoImgPrdVinculo.setUrl(filename);
+                imagensProdutoList.add(novoImgPrdVinculo);
+            } catch (IOException e) {
+                throw new RuntimeException("Não foi possivel salvar uma imagem no processo de salvar o produto. Nome do arquivo: " + imagem.getName(), e);
+            }
+        }
+        imagemProdutoRepository.saveAll(imagensProdutoList);
     }
 
-    public String gerarProdutoSKU() {
-        return "kk";
+    public String gerarProdutoSKU(Produto produto) {
+        if (produto.getTipo() == null || produto.getTipo().getId() == null) {
+            throw new IllegalArgumentException("O tipo do produto não pode ser nulo.");
+        }
+
+        if (produto.getCategoria() == null || produto.getCategoria().getId() == null) {
+            throw new IllegalArgumentException("A categoria do produto não pode ser nula.");
+        }
+
+        String abreviacaoTipo = tipoRepository.findById(produto.getTipo().getId())
+                .map(Tipo::getAbreviacao)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo não encontrado para o produto recebido - (ID tipo procurado:)" + produto.getTipo().getId()));
+
+        String abreviacaoCategoria = categoriaRepository.findById(produto.getCategoria().getId())
+                .map(Categoria::getAbreviacao)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrado para o produto recebido - (ID categoria procurada:)" + produto.getCategoria().getId()));
+
+        String chaveSku = abreviacaoTipo + abreviacaoCategoria;
+        String produto_sku = skuSequenceService.gerarSkuSequence(chaveSku);
+
+        return produto_sku;
     }
 }
