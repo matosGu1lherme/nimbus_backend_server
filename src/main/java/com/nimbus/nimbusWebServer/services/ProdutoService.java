@@ -58,7 +58,12 @@ public class ProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + produto.categoria_id() + " não encontrado.")));
         novoProduto.setSku(gerarProdutoSKU(novoProduto));
 
-        novoProduto = produtoRepository.save(novoProduto);
+        try {
+            novoProduto = produtoRepository.save(novoProduto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
         List<ImagemProduto> imagensProdutoList= new ArrayList<>();
 
@@ -71,13 +76,23 @@ public class ProdutoService {
                 sequence++;
                 ImagemProduto novoImgPrdVinculo = new ImagemProduto();
                 novoImgPrdVinculo.setId(imagemId);
+                novoImgPrdVinculo.setProduto(novoProduto);
                 novoImgPrdVinculo.setUrl(filename);
                 imagensProdutoList.add(novoImgPrdVinculo);
             } catch (IOException e) {
                 throw new RuntimeException("Não foi possivel salvar uma imagem no processo de salvar o produto. Nome do arquivo: " + imagem.getName(), e);
             }
         }
-        imagemProdutoRepository.saveAll(imagensProdutoList);
+        try {
+            imagemProdutoRepository.saveAll(imagensProdutoList);
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public List<Produto> buscarTodosProdutos() {
+        return produtoRepository.findAll();
     }
 
     public String gerarProdutoSKU(Produto produto) {
