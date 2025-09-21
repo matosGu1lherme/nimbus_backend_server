@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nimbus.nimbusWebServer.models.produtos.id.ImagemId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class ImagemProduto {
     @EmbeddedId
     private ImagemId id;
 
+    @JsonBackReference
     @MapsId("produtoId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "produto_id")

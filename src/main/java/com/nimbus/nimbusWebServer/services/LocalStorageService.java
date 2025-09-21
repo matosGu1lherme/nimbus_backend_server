@@ -54,5 +54,9 @@ public class LocalStorageService implements StorageService{
             throw new FileNotFoundException("Arquivo não foi encontrado ou não pode ser lido: ", filename);
         }
     }
+
+    public String getFullUrlImage(String url) {
+        return System.getProperty("user.dir") + "/" + url;
+    }
 }
 

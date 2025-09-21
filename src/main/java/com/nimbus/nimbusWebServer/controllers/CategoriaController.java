@@ -23,8 +23,8 @@ public class CategoriaController {
         return ResponseEntity.ok(novaCategoria);
     }
 
-    @GetMapping("listar_categorias")
-    public List<Categoria> ListarCategorias() {
+    @GetMapping("public/buscar_categorias")
+    public List<Categoria> buscarCategorias() {
         return categoriaService.listarCategorias();
     }
 }

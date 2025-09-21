@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
-import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
+import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.exception.customException.RecursoNaoEncontradoException;
 import com.nimbus.nimbusWebServer.models.produtos.Categoria;
 import com.nimbus.nimbusWebServer.models.produtos.ImagemProduto;
@@ -47,7 +47,7 @@ public class ProdutoService {
     }
 
     @Transactional
-    public void salvarProduto(ProdutoRequestDto produto, MultipartFile[] imagensProduto) {
+    public void salvarProduto(ProdutoResponseDto produto, MultipartFile[] imagensProduto) {
         Produto novoProduto =  new Produto();
         novoProduto.setNome(produto.nome());
         novoProduto.setPreco(produto.preco());
@@ -91,8 +91,40 @@ public class ProdutoService {
         }
     }
 
-    public List<Produto> buscarTodosProdutos() {
-        return produtoRepository.findAll();
+    public List<ProdutoResponseDto> buscarProdutos() {
+        List<Produto> produtos = produtoRepository.findAll();
+        List<ProdutoResponseDto> produtosResponseDto = new ArrayList();
+        for (Produto produto : produtos) {
+            ProdutoResponseDto novoProdutoResponse = new ProdutoResponseDto(
+                    produto.getId(),
+                    produto.getNome(),
+                    produto.getDescricao(),
+                    produto.getPreco(),
+                    produto.getTipo().getId(),
+                    produto.getCategoria().getId(),
+                    produto.getSku()
+            );
+            produtosResponseDto.add(novoProdutoResponse);
+        }
+        return produtosResponseDto;
+    }
+
+    public List<ProdutoResponseDto> buscarProdutosPorNomeDeCategoria(String categoriaNome) {
+        List<Produto> produtos = produtoRepository.findByCategoriaNome(categoriaNome);
+        List<ProdutoResponseDto> produtoResponseDtos = new ArrayList<>();
+        for (Produto produto : produtos) {
+            ProdutoResponseDto novoProdutoResponseDto = new ProdutoResponseDto(
+                    produto.getId(),
+                    produto.getNome(),
+                    produto.getDescricao(),
+                    produto.getPreco(),
+                    produto.getTipo().getId(),
+                    produto.getCategoria().getId(),
+                    produto.getSku()
+            );
+            produtoResponseDtos.add(novoProdutoResponseDto);
+        }
+        return produtoResponseDtos;
     }
 
     public String gerarProdutoSKU(Produto produto) {
@@ -113,8 +145,19 @@ public class ProdutoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrado para o produto recebido - (ID categoria procurada:)" + produto.getCategoria().getId()));
 
         String chaveSku = abreviacaoTipo + abreviacaoCategoria;
-        String produto_sku = skuSequenceService.gerarSkuSequence(chaveSku);
+        return skuSequenceService.gerarSkuSequence(chaveSku);
+    }
 
-        return produto_sku;
+    public String retornarImgApresentacaoProd(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new NoSuchElementException("Produto não encontrado"));
+
+        ImagemProduto imagensProduto = produto.getImagens()
+                .stream()
+                .filter(imgProduto -> (imgProduto.getId().getSequencia() == 1))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Não foi possivel encontrar a imagem de apresentação do produto."));
+
+        return imagensProduto.getUrl();
     }
 }

@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.controllers;
 
-import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
+import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import com.nimbus.nimbusWebServer.services.ProdutoService;
 import org.springframework.http.HttpStatus;
@@ -22,17 +22,30 @@ public class ProdutoController {
 
     @PostMapping("/salvar_produto")
     public String criarProduto(
-            @RequestPart("produto") ProdutoRequestDto produtoJson,
+            @RequestPart("produto") ProdutoResponseDto produtoJson,
             @RequestPart("imagens") MultipartFile[] imagens) {
         produtoService.salvarProduto(produtoJson, imagens);
         return("Produto salvo com sucesso!");
     }
 
-    @GetMapping("/buscarTodosProdutos")
-    public ResponseEntity<List<Produto>> buscarTodosProdutos() {
-        List<Produto> produtos = produtoService.buscarTodosProdutos();
+    @GetMapping("/public/buscar_produtos")
+    public ResponseEntity<List<ProdutoResponseDto>> buscarTodosProdutos() {
+        List<ProdutoResponseDto> produtos = produtoService.buscarProdutos();
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .body(produtos);
+    }
+
+    @GetMapping("/public/buscar_produtos_por_nome_categoria")
+    public ResponseEntity<List<ProdutoResponseDto>> bucarProdutosPorCategora(@RequestParam String categoriaNome) {
+        List<ProdutoResponseDto> produtos = produtoService.buscarProdutosPorNomeDeCategoria(categoriaNome);
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(produtos);
+    }
+
+    @GetMapping("/public/buscar_imagem_apresentacao_produto")
+    public String buscarImagemApresentacaoProduto(@RequestParam Long produtoId) {
+        return produtoService.retornarImgApresentacaoProd(produtoId);
     }
 }

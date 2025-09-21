@@ -7,5 +7,6 @@ import java.io.IOException;
 
 public interface StorageService {
     String store(MultipartFile file) throws IOException;
-    Resource load(String filename) ;
+    Resource load(String filename);
+    String getFullUrlImage(String url);
 }

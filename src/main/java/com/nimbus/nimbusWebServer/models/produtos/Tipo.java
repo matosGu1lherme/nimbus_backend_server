@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ public class Tipo {
     @Column(nullable = false)
     private boolean ativo;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "tipo")
     private List<Produto> produtos;
 

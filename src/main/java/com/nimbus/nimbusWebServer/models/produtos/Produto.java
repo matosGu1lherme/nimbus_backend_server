@@ -1,5 +1,7 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -34,14 +36,17 @@ public class Produto implements Serializable {
     @Column(unique = true, nullable = false)
     private String sku;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ImagemProduto> imagens = new ArrayList<>();
 
+    @JsonBackReference
     @NotNull
     @JoinColumn(name = "tipo_id", nullable = false)
     @ManyToOne
     private Tipo tipo;
 
+    @JsonBackReference
     @NotNull
     @JoinColumn(name = "categoria_id", nullable = false)
     @ManyToOne

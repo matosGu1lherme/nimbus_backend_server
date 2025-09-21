@@ -21,8 +21,12 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/users/login", //url para fazer login
-            "/users/register", //url para criar um usuário
+            "/users/login",
+            "/users/register",
+
+            "/categoria/public/**",
+            "/produto/public/**",
+            "/uploads/**",
 
             "/categoria/**",
             "/categoria/listar_categorias",
@@ -34,7 +38,6 @@ public class SecurityConfiguration {
 
     // Endpoints que requerem autenticação para serem acessados
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/products/**"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
@@ -54,6 +57,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
+                        //.requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(ENDPOINTS_ADMIN).hasRole("ADMINISTRATOR") // Repare que não é necessário colocar "ROLE" antes do nome, como fizemos na definição das roles
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CUSTOMER")
                         .anyRequest().denyAll()
