@@ -23,17 +23,9 @@ public class SecurityConfiguration {
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/users/login",
             "/users/register",
-
             "/categoria/public/**",
             "/produto/public/**",
             "/uploads/**",
-
-            "/categoria/**",
-            "/categoria/listar_categorias",
-            "/tipo/salvar_tipo",
-            "/tipo/listar_tipos",
-            "/teste/**",
-            "/produto/salvar_produto"
     };
 
     // Endpoints que requerem autenticação para serem acessados

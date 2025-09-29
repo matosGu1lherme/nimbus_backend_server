@@ -31,7 +31,7 @@ public class UserService {
     private SecurityConfiguration securityConfiguration;
 
     // Método responsável por autenticar um usuário e retornar um token JWT
-    public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
+    public String authenticateUser(LoginUserDto loginUserDto) {
         // Cria um objeto de autenticação com o email e a senha do usuário
         var usernamePassword = new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password());
 
@@ -42,7 +42,7 @@ public class UserService {
         UserDetailsImpl userDetails = ((UserDetailsImpl) auth.getPrincipal());
 
         // Gera um token JWT para o usuário autenticado
-        return new RecoveryJwtTokenDto(jwtTokenService.generateToken(userDetails));
+        return jwtTokenService.generateToken(userDetails);
     }
 
     // Método responsável por criar um usuário
