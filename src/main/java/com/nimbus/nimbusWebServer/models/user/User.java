@@ -30,6 +30,9 @@ public class User {
 
     private String password;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RefreshToken refreshToken;
+
     private String cpf;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

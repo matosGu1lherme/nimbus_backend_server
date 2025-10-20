@@ -21,7 +21,7 @@ public class TipoController {
         return ResponseEntity.ok(novoTipo);
     }
 
-    @GetMapping("listar_tipos")
+    @GetMapping("public/listar_tipos")
     public List<Tipo> listarTipos() {
         return tipoService.listarTipos();
     }

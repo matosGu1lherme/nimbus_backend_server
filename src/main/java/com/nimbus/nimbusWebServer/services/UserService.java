@@ -18,17 +18,27 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenService jwtTokenService;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private SecurityConfiguration securityConfiguration;
+
+
+    public UserService(
+            AuthenticationManager authenticationManager,
+            JwtTokenService jwtTokenService,
+            UserRepository userRepository,
+            SecurityConfiguration securityConfiguration,
+            RefreshTokenService refreshTokenService
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenService = jwtTokenService;
+        this.userRepository = userRepository;
+        this.securityConfiguration = securityConfiguration;
+        this.refreshTokenService = refreshTokenService;
+    }
+
+    private RefreshTokenService refreshTokenService;
 
     // Método responsável por autenticar um usuário e retornar um token JWT
     public String authenticateUser(LoginUserDto loginUserDto) {
@@ -42,7 +52,7 @@ public class UserService {
         UserDetailsImpl userDetails = ((UserDetailsImpl) auth.getPrincipal());
 
         // Gera um token JWT para o usuário autenticado
-        return jwtTokenService.generateToken(userDetails);
+        return refreshTokenService.criarRefreshToken(userDetails).getToken();
     }
 
     // Método responsável por criar um usuário
