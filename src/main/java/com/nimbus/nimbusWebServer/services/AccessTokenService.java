@@ -5,27 +5,28 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
+import com.nimbus.nimbusWebServer.models.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
 
 @Service
-public class JwtTokenService {
+public class AccessTokenService {
 
     @Value("${api.security.token.secret}")
     private String SECRET_KEY;
 
     private static final String ISSUER = "nimbus-api";
 
-    public String generateToken(UserDetailsImpl user) {
+    public String generateToken(String email) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             return JWT.create()
                     .withIssuer(ISSUER) // Define o emissor do token
                     .withIssuedAt(creationDate()) // Define a data de emissão do token
                     .withExpiresAt(expirationDate()) // Define a data de expiração do token
-                    .withSubject(user.getUsername()) // Define o assunto do token (neste caso, o nome de usuário)
+                    .withSubject(email) // Define o assunto do token (neste caso, o nome de usuário)
                     .sign(algorithm); // Assina o token usando o algoritmo especificado
         }catch (JWTCreationException exception){
             throw new JWTCreationException("Erro ao gerar token.", exception);

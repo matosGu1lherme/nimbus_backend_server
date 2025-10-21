@@ -1,8 +1,10 @@
 package com.nimbus.nimbusWebServer.controllers;
 
 
+import com.nimbus.nimbusWebServer.dtos.AuthResponseDto;
 import com.nimbus.nimbusWebServer.dtos.CreateUserDto;
 import com.nimbus.nimbusWebServer.dtos.LoginUserDto;
+import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import com.nimbus.nimbusWebServer.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,20 +21,17 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccessTokenService accessTokenService;
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginUserDto loginUserDto, HttpServletResponse response) {
-        String token = userService.authenticateUser(loginUserDto);
+        String refreshToken = userService.authenticateUser(loginUserDto);
+        String accessToken = accessTokenService.generateToken(loginUserDto.email());
 
-        Cookie cookie = new Cookie("auth_token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body("Login realizado com sucesso");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new AuthResponseDto(refreshToken, accessToken));
     }
 
     @PostMapping("/register")
@@ -40,5 +39,7 @@ public class UserController {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+
 
 }

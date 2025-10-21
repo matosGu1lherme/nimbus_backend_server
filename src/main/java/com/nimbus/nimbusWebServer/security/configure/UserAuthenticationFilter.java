@@ -3,7 +3,7 @@ package com.nimbus.nimbusWebServer.security.configure;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
-import com.nimbus.nimbusWebServer.services.JwtTokenService;
+import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService;
+    private AccessTokenService jwtTokenService;
 
     @Autowired
     private UserRepository userRepository;

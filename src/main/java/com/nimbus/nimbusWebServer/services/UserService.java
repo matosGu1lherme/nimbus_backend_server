@@ -2,13 +2,11 @@ package com.nimbus.nimbusWebServer.services;
 
 import com.nimbus.nimbusWebServer.dtos.CreateUserDto;
 import com.nimbus.nimbusWebServer.dtos.LoginUserDto;
-import com.nimbus.nimbusWebServer.dtos.RecoveryJwtTokenDto;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.security.configure.SecurityConfiguration;
 import com.nimbus.nimbusWebServer.security.roles.Role;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -19,14 +17,14 @@ import java.util.List;
 public class UserService {
 
     private AuthenticationManager authenticationManager;
-    private JwtTokenService jwtTokenService;
+    private AccessTokenService jwtTokenService;
     private UserRepository userRepository;
     private SecurityConfiguration securityConfiguration;
 
 
     public UserService(
             AuthenticationManager authenticationManager,
-            JwtTokenService jwtTokenService,
+            AccessTokenService jwtTokenService,
             UserRepository userRepository,
             SecurityConfiguration securityConfiguration,
             RefreshTokenService refreshTokenService
