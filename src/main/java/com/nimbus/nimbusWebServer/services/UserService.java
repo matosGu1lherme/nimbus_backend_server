@@ -17,26 +17,23 @@ import java.util.List;
 public class UserService {
 
     private AuthenticationManager authenticationManager;
-    private AccessTokenService jwtTokenService;
     private UserRepository userRepository;
     private SecurityConfiguration securityConfiguration;
+    private RefreshTokenService refreshTokenService;
 
 
     public UserService(
             AuthenticationManager authenticationManager,
-            AccessTokenService jwtTokenService,
             UserRepository userRepository,
             SecurityConfiguration securityConfiguration,
             RefreshTokenService refreshTokenService
     ) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenService = jwtTokenService;
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
         this.refreshTokenService = refreshTokenService;
     }
 
-    private RefreshTokenService refreshTokenService;
 
     // Método responsável por autenticar um usuário e retornar um token JWT
     public String authenticateUser(LoginUserDto loginUserDto) {

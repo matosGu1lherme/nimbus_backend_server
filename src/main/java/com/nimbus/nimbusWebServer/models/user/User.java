@@ -31,7 +31,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private RefreshToken refreshToken;
+    private List<RefreshToken> refreshToken = new ArrayList<>();
 
     private String cpf;
 
