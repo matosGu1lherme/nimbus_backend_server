@@ -6,7 +6,6 @@ import com.nimbus.nimbusWebServer.models.user.RefreshToken;
 import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.RefreshTokenRepository;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -17,13 +16,16 @@ import java.util.Base64;
 
 @Service
 public class RefreshTokenService {
+    private AccessTokenService accessTokenService;
     private RefreshTokenRepository refreshTokenRepository;
     private UserRepository userRepository;
 
     public RefreshTokenService(
+            AccessTokenService accessTokenService,
             RefreshTokenRepository refreshTokenRepository,
             UserRepository userRepository
     ) {
+            this.accessTokenService = accessTokenService;
             this.refreshTokenRepository = refreshTokenRepository;
             this.userRepository = userRepository;
     }
@@ -59,5 +61,18 @@ public class RefreshTokenService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar hash token", e);
         }
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Refresh token invalid"));
+
+        if(token.getExpiração().isBefore(Instant.now())) {
+            throw new RuntimeException("Refresh token expirado");
+        }
+
+        User user = token.getUsuario();
+
+        return accessTokenService.generateToken(user.getEmail());
     }
 }
