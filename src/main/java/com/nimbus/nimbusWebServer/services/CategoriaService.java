@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
+import com.nimbus.nimbusWebServer.dtos.CategoriaResquestDto;
 import com.nimbus.nimbusWebServer.models.produtos.Categoria;
 import com.nimbus.nimbusWebServer.repositories.CategoriaRepository;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,9 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    public Categoria salvarCategoria(Categoria categoria) {
-        return categoriaRepository.save(categoria);
+    public Categoria salvarCategoria(CategoriaResquestDto categoriaResquestDto) {
+        Categoria novaCategoria = new Categoria(categoriaResquestDto);
+        return categoriaRepository.save(novaCategoria);
     }
 
     public List<Categoria> listarCategorias() {

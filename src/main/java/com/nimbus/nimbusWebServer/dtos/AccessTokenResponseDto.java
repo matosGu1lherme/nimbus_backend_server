@@ -1,6 +1,6 @@
 package com.nimbus.nimbusWebServer.dtos;
 
 public record AccessTokenResponseDto(
-        String accessToken
+        String access_token
 ) {
 }

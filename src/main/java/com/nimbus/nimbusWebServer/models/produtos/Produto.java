@@ -40,13 +40,11 @@ public class Produto implements Serializable {
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ImagemProduto> imagens = new ArrayList<>();
 
-    @JsonBackReference
     @NotNull
     @JoinColumn(name = "tipo_id", nullable = false)
     @ManyToOne
     private Tipo tipo;
 
-    @JsonBackReference
     @NotNull
     @JoinColumn(name = "categoria_id", nullable = false)
     @ManyToOne

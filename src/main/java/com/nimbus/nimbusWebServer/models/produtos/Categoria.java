@@ -2,10 +2,12 @@ package com.nimbus.nimbusWebServer.models.produtos;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nimbus.nimbusWebServer.dtos.CategoriaResquestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -15,7 +17,14 @@ import java.util.List;
 @Table(name = "CATEGORIA")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Categoria {
+
+    public Categoria(CategoriaResquestDto categoriaResquestDto) {
+        this.nome = categoriaResquestDto.nome();
+        this.abreviacao = categoriaResquestDto.abreviacao();
+        this.ativo = categoriaResquestDto.ativo();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

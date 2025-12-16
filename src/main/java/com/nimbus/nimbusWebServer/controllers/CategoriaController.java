@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.controllers;
 
+import com.nimbus.nimbusWebServer.dtos.CategoriaResquestDto;
 import com.nimbus.nimbusWebServer.models.produtos.Categoria;
 import com.nimbus.nimbusWebServer.services.CategoriaService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class CategoriaController {
     }
 
     @PostMapping("salvar_categoria")
-    public ResponseEntity<Categoria> criarCategoria(@RequestBody Categoria categoria) {
-        Categoria novaCategoria = categoriaService.salvarCategoria(categoria);
+    public ResponseEntity<Categoria> criarCategoria(@RequestBody CategoriaResquestDto categoriaResquestDto) {
+        Categoria novaCategoria = categoriaService.salvarCategoria(categoriaResquestDto);
         return ResponseEntity.ok(novaCategoria);
     }
 

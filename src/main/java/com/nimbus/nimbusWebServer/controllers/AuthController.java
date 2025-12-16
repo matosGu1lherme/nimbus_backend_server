@@ -1,13 +1,10 @@
 package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.AccessTokenResponseDto;
-import com.nimbus.nimbusWebServer.dtos.RefreshTokenRequestDto;
 import com.nimbus.nimbusWebServer.services.RefreshTokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,9 +16,11 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AccessTokenResponseDto> atualizarAccessToken(RefreshTokenRequestDto refreshTokenRequestDto) {
-        String newAccessToken = refreshTokenService.refreshAccessToken(refreshTokenRequestDto.refreshToken());
+    @GetMapping("/refresh")
+    public ResponseEntity<AccessTokenResponseDto> atualizarAccessToken(
+            @CookieValue("refreshToken") String refreshToken
+    ) {
+        String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new AccessTokenResponseDto(newAccessToken));

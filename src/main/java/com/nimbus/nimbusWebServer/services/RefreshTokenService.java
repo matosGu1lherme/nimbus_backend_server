@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
+import com.nimbus.nimbusWebServer.exception.customException.TokenExpiradoException;
 import com.nimbus.nimbusWebServer.exception.customException.UserNotFoundException;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import com.nimbus.nimbusWebServer.models.user.RefreshToken;
@@ -68,7 +69,7 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new RuntimeException("Refresh token invalid"));
 
         if(token.getExpiração().isBefore(Instant.now())) {
-            throw new RuntimeException("Refresh token expirado");
+            throw new TokenExpiradoException(token.getExpiração());
         }
 
         User user = token.getUsuario();

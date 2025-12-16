@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,19 +31,36 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(checkIfEndpointIsNotPublic(request)) {
-            String token = recoveryToken(request);
-            if (token != null) {
+            try {
+                String token = recoveryToken(request);
+
+                if (token == null) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token ausente.");
+                    return;
+                }
+
                 String subject = jwtTokenService.getSubjectFromToken(token);
-                User user = userRepository.findByEmail(subject).get();
+                User user = userRepository.findByEmail(subject)
+                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
                 // Cria um objeto de autenticação do Spring Security
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
 
                 // Define o objeto de autenticação no contexto de segurança do Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }else {
-                throw new RuntimeException("O token está ausente.");
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("Erro ao autenticar: " + e.getMessage());
+                response.getWriter().flush();
+                return;
             }
         }
         filterChain.doFilter(request, response); // Continua o processamento da requisição

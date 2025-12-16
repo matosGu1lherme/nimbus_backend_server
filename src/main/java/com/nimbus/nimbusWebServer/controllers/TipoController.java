@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.controllers;
 
+import com.nimbus.nimbusWebServer.dtos.TipoRequestDto;
 import com.nimbus.nimbusWebServer.models.produtos.Tipo;
 import com.nimbus.nimbusWebServer.services.TipoService;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class TipoController {
     public TipoController(TipoService tipoService) { this.tipoService = tipoService; }
 
     @PostMapping("salvar_tipo")
-    public ResponseEntity<Tipo> criarTipo(@RequestBody Tipo tipo) {
-        Tipo novoTipo = tipoService.salvarTipo(tipo);
+    public ResponseEntity<Tipo> criarTipo(@RequestBody TipoRequestDto tipoRequestDto) {
+        Tipo novoTipo = tipoService.salvarTipo(tipoRequestDto);
         return ResponseEntity.ok(novoTipo);
     }
 

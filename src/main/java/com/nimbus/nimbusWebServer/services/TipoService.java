@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
+import com.nimbus.nimbusWebServer.dtos.TipoRequestDto;
 import com.nimbus.nimbusWebServer.models.produtos.Tipo;
 import com.nimbus.nimbusWebServer.repositories.TipoRepository;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,9 @@ public class TipoService {
 
     public TipoService( TipoRepository tipoRepository ) { this.tipoRepository = tipoRepository; }
 
-    public Tipo salvarTipo(Tipo tipo) {
-        return tipoRepository.save(tipo);
+    public Tipo salvarTipo(TipoRequestDto tipoRequestDto) {
+        Tipo novoTipo = new Tipo(tipoRequestDto);
+        return tipoRepository.save(novoTipo);
     }
 
     public List<Tipo> listarTipos() {

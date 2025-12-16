@@ -1,10 +1,11 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nimbus.nimbusWebServer.dtos.TipoRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,14 @@ import java.util.List;
 @Table(name = "TIPO")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Tipo {
+
+    public Tipo(TipoRequestDto tipoRequestDto) {
+        this.nome = tipoRequestDto.nome();
+        this.abreviacao = tipoRequestDto.abreviacao();
+        this.ativo = tipoRequestDto.ativo();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +39,6 @@ public class Tipo {
     @Column(nullable = false)
     private boolean ativo;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "tipo")
     private List<Produto> produtos;
 

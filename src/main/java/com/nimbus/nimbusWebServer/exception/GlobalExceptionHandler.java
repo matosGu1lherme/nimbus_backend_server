@@ -3,6 +3,7 @@ package com.nimbus.nimbusWebServer.exception;
 import com.nimbus.nimbusWebServer.exception.customException.FileNotFoundException;
 import com.nimbus.nimbusWebServer.exception.customException.FileStorageException;
 import com.nimbus.nimbusWebServer.exception.customException.RecursoNaoEncontradoException;
+import com.nimbus.nimbusWebServer.exception.customException.TokenExpiradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -47,8 +48,16 @@ public class GlobalExceptionHandler {
                 .body("Ocorreu um erro de concorrência. Por favor, tente novamente mais tarde");
     }
 
+    @ExceptionHandler(TokenExpiradoException.class)
+    public  ResponseEntity<String> handleTokenExpiradoException(TokenExpiradoException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
-        return new ResponseEntity<>("Ocorreu um erro inesperado.", HttpStatus.INTERNAL_SERVER_ERROR);
+        ex.printStackTrace();
+        return new ResponseEntity<>("Ocorreu um erro inesperado. (" + ex.getMessage() + ")", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
