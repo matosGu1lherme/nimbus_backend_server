@@ -39,7 +39,7 @@ public class UserController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
