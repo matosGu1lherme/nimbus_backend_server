@@ -1,21 +1,23 @@
 # ETAPA 1: BUILD
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+# Usando JDK 22 para compilar
+FROM maven:3.9-eclipse-temurin-22 AS build
 WORKDIR /app
 
-# Copia tudo (incluindo o pom.xml e a pasta src)
+# Copia tudo para o container
 COPY . .
 
-# Compila e gera o JAR
+# Compila o projeto com Java 22
 RUN mvn clean package -DskipTests
 
 # ETAPA 2: RUN
-FROM eclipse-temurin:17-jdk-alpine
+# Usando o JRE leve do Java 22 para rodar
+FROM eclipse-temurin:22-jdk-alpine
 WORKDIR /app
 
-# Pega o JAR gerado na etapa acima
+# Pega o JAR gerado na etapa de build
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-# Roda a aplicação
+# Comando para iniciar
 ENTRYPOINT ["java", "-jar", "app.jar"]
