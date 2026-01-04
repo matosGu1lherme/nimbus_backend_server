@@ -22,7 +22,8 @@ public class ProdutoController {
     @PostMapping("/salvar_produto")
     public String criarProduto(
             @RequestPart("produto") ProdutoResponseDto produtoJson,
-            @RequestPart("imagens") MultipartFile[] imagens) {
+            @RequestPart("imagens") MultipartFile[] imagens
+    ) {
         produtoService.salvarProduto(produtoJson, imagens);
         return("Produto salvo com sucesso!");
     }
