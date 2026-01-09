@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
+import com.nimbus.nimbusWebServer.dtos.UserDataInfoTokenDto;
 import com.nimbus.nimbusWebServer.exception.customException.TokenExpiradoException;
 import com.nimbus.nimbusWebServer.exception.customException.UserNotFoundException;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
@@ -75,5 +76,16 @@ public class RefreshTokenService {
         User user = token.getUsuario();
 
         return accessTokenService.generateToken(user.getEmail());
+    }
+
+    public UserDataInfoTokenDto findUserInfoByToken(String  token) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token não foi encontrado"));
+
+        User user = refreshToken.getUsuario();
+        String email = user.getEmail();
+        String nome = user.getNome();
+
+        return new UserDataInfoTokenDto(nome, email);
     }
 }
