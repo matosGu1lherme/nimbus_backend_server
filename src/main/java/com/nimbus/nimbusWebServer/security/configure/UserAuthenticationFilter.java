@@ -32,19 +32,31 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(checkIfEndpointIsNotPublic(request)) {
             try {
+                System.out.println(">>> [AUTH CHECK] Acessando rota privada: " + request.getRequestURI());
+
                 String token = recoveryToken(request);
+                System.out.println("Token que esta sendo resgatado: " + token);
 
                 if (token == null) {
+                    System.out.println(">>> [AUTH ERROR] Token não encontrado no Header Authorization!");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Token ausente.");
                     return;
                 }
 
                 String subject = jwtTokenService.getSubjectFromToken(token);
+                System.out.println(">>> [AUTH INFO] Subject extraído do token: " + subject);
+
                 User user = userRepository.findByEmail(subject)
-                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                        .orElseThrow(() -> {
+                            System.out.println(">>> [AUTH ERROR] Usuário não existe no banco de dados: " + subject);
+                            return new RuntimeException("Usuário não encontrado");
+                        });
 
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+                System.out.println(">>> [AUTH SUCCESS] Usuário encontrado: " + user.getEmail());
+                System.out.println(">>> [AUTH SUCCESS] Roles do usuário: " + userDetails.getAuthorities());
 
                 // Cria um objeto de autenticação do Spring Security
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -55,13 +67,18 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 // Define o objeto de autenticação no contexto de segurança do Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println(">>> [AUTH CONTEXT] Autenticação definida no SecurityContext com sucesso.");
             } catch (Exception e) {
+                System.out.println(">>> [AUTH EXCEPTION] Falha crítica no filtro: " + e.getMessage());
+                e.printStackTrace(); // Importante para ver o stacktrace completo no log do Render
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
                 response.getWriter().write("Erro ao autenticar: " + e.getMessage());
                 response.getWriter().flush();
                 return;
             }
+        } else {
+            System.out.println(">>> [AUTH SKIP] Rota pública detectada: " + request.getRequestURI());
         }
         filterChain.doFilter(request, response); // Continua o processamento da requisição
     }
