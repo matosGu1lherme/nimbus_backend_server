@@ -36,7 +36,8 @@ public class SecurityConfiguration {
             "/tipo/public/listar_tipos",
             "/categoria/public/buscar_categorias",
             "/produto/public/**",
-            "/uploads/**"
+            "/uploads/**",
+            "/users/logout"
     };
 
     // Endpoints que requerem autenticação para serem acessados
