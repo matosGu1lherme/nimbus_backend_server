@@ -1,4 +1,4 @@
-package com.nimbus.nimbusWebServer.security.configure;
+package com.nimbus.nimbusWebServer.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

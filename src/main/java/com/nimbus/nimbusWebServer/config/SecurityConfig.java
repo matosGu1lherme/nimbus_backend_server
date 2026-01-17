@@ -1,5 +1,6 @@
-package com.nimbus.nimbusWebServer.security.configure;
+package com.nimbus.nimbusWebServer.config;
 
+import com.nimbus.nimbusWebServer.security.filter.UserAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
     @Value("${cors.allowed-origins}")
     private String[] allowedOrigins;
 
@@ -35,18 +36,24 @@ public class SecurityConfiguration {
             "/auth/refresh",
             "/tipo/public/listar_tipos",
             "/categoria/public/buscar_categorias",
-            "/produto/public/**",
             "/uploads/**",
-            "/users/logout"
+            "/users/logout",
+            "/produto/public/buscar_produtos",
+            "/produto/public/buscar_imagem_apresentacao_produto"
     };
 
     // Endpoints que requerem autenticação para serem acessados
-    public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = { };
+    public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
+            "/categoria/salvar_categoria",
+            "/tipo/salvar_tipo",
+            "/produto/salvar_produto"
+    };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
     public static final String [] ENDPOINTS_CUSTOMER = {
             "/categoria/public/buscar_categorias",
-            "/tipo/public/listar_tipos"
+            "/tipo/public/listar_tipos",
+            "/produto/public/buscar_produtos"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador

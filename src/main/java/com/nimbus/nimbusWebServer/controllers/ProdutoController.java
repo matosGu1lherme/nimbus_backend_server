@@ -32,7 +32,7 @@ public class ProdutoController {
     public ResponseEntity<List<ProdutoResponseDto>> buscarTodosProdutos() {
         List<ProdutoResponseDto> produtos = produtoService.buscarProdutos();
         return ResponseEntity
-                .status(HttpStatus.FOUND)
+                .status(HttpStatus.OK)
                 .body(produtos);
     }
 
