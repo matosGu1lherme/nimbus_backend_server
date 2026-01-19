@@ -1,7 +1,6 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nimbus.nimbusWebServer.dtos.CategoriaResquestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -42,7 +41,7 @@ public class Categoria {
     @Column(nullable = false)
     private Boolean ativo;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "categoria")
     private List<Produto> produtos;
 

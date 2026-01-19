@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nimbus.nimbusWebServer.dtos.TipoRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +40,7 @@ public class Tipo {
     @Column(nullable = false)
     private boolean ativo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tipo")
     private List<Produto> produtos;
 
