@@ -1,6 +1,7 @@
 package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
+import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import com.nimbus.nimbusWebServer.services.ProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,13 @@ public class ProdutoController {
     @GetMapping("/public/buscar_imagem_apresentacao_produto")
     public String buscarImagemApresentacaoProduto(@RequestParam Long produtoId) {
         return produtoService.retornarImgApresentacaoProd(produtoId);
+    }
+
+    @GetMapping("/public/obterProdutoPorSlug")
+    public ResponseEntity<ProdutoResponseDto> buscarProdutoPorSlug(@RequestParam String slug) {
+        ProdutoResponseDto produtoResponseDto = produtoService.buscarProdutoPorSlug(slug);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(produtoResponseDto);
     }
 }

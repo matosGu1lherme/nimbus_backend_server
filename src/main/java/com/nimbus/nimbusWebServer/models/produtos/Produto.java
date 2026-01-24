@@ -1,6 +1,5 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -9,9 +8,11 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "PRODUTO")
@@ -25,6 +26,9 @@ public class Produto implements Serializable {
     @NotNull
     @Column(nullable = false)
     private String nome;
+
+    @Column(unique = true, nullable = false)
+    private String slug;
 
     private String descricao;
 
@@ -62,4 +66,24 @@ public class Produto implements Serializable {
     private Estoque estoque;
 
     private LocalDateTime criadoEm = LocalDateTime.now();
+
+    @PrePersist
+    public void gerarSlug() {
+        if(this.nome != null) {
+            String nomeBase = String.format("%s %s %s",
+                    this.tipo.getNome(),
+                    this.categoria.getNome(),
+                    this.nome)
+                    .toLowerCase()
+                    .trim();
+
+            String nomeAcentosSerparados = Normalizer.normalize(nomeBase, Normalizer.Form.NFD); //Computador entende ê como e^ essa linha separa os carachteres
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+"); //Carrega regex especializado em buscar acentos
+            String nomeLimpoAcentos = pattern.matcher(nomeAcentosSerparados).replaceAll("");
+
+            this.slug = nomeLimpoAcentos
+                    .replaceAll("[^a-z0-9 ]", "")
+                    .replaceAll("\\s+", "-");
+        }
+    }
 }
