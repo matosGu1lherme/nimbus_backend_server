@@ -161,6 +161,20 @@ public class ProdutoService {
         return imagensProduto.getUrl();
     }
 
+    public List<String> retornarImagensProduto(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar produto para retornar imagens."));
+
+        List<ImagemProduto> imagensProduto = produto.getImagens();
+
+        List<String> listaUrlsImagens = new ArrayList<>();
+        for (ImagemProduto imgProd : imagensProduto) {
+            listaUrlsImagens.add(imgProd.getUrl());
+        }
+
+        return listaUrlsImagens;
+    }
+
     public ProdutoResponseDto buscarProdutoPorSlug(String slug) {
         Produto produto = produtoRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Produto não encontratdo a partir do slug: " + slug));

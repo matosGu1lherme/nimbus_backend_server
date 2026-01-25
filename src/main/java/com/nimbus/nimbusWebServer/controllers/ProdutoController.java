@@ -50,7 +50,15 @@ public class ProdutoController {
         return produtoService.retornarImgApresentacaoProd(produtoId);
     }
 
-    @GetMapping("/public/obterProdutoPorSlug")
+    @GetMapping("/public/buscar_imagens_produto")
+    public ResponseEntity<List<String>> buscarTodasImagensProduto(@RequestParam Long produtoId) {
+        List<String> listaImgsProd = produtoService.retornarImagensProduto(produtoId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(listaImgsProd);
+    }
+
+    @GetMapping("/public/obter_produto_por_slug")
     public ResponseEntity<ProdutoResponseDto> buscarProdutoPorSlug(@RequestParam String slug) {
         ProdutoResponseDto produtoResponseDto = produtoService.buscarProdutoPorSlug(slug);
         return ResponseEntity
