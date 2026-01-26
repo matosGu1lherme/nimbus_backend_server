@@ -23,7 +23,6 @@ public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final TipoRepository tipoRepository;
     private final CategoriaRepository categoriaRepository;
-    private final TagRepository tagRepository;
     private final SkuSequenceService skuSequenceService;
     private final StorageService storageService;
     private final ImagemProdutoRepository imagemProdutoRepository;
@@ -40,7 +39,6 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
         this.tipoRepository = tipoRepository;
         this.categoriaRepository = categoriaRepository;
-        this.tagRepository = tagRepository;
         this.skuSequenceService = skuSequenceService;
         this.storageService = storageService;
         this.imagemProdutoRepository = imagemProdutoRepository;
@@ -98,6 +96,7 @@ public class ProdutoService {
             ProdutoResponseDto novoProdutoResponse = new ProdutoResponseDto(
                     produto.getId(),
                     produto.getNome(),
+                    produto.getSlug(),
                     produto.getDescricao(),
                     produto.getPreco(),
                     produto.getTipo().getId(),
@@ -116,6 +115,7 @@ public class ProdutoService {
             ProdutoResponseDto novoProdutoResponseDto = new ProdutoResponseDto(
                     produto.getId(),
                     produto.getNome(),
+                    produto.getSlug(),
                     produto.getDescricao(),
                     produto.getPreco(),
                     produto.getTipo().getId(),
@@ -159,5 +159,35 @@ public class ProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Não foi possivel encontrar a imagem de apresentação do produto."));
 
         return imagensProduto.getUrl();
+    }
+
+    public List<String> retornarImagensProduto(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar produto para retornar imagens."));
+
+        List<ImagemProduto> imagensProduto = produto.getImagens();
+
+        List<String> listaUrlsImagens = new ArrayList<>();
+        for (ImagemProduto imgProd : imagensProduto) {
+            listaUrlsImagens.add(imgProd.getUrl());
+        }
+
+        return listaUrlsImagens;
+    }
+
+    public ProdutoResponseDto buscarProdutoPorSlug(String slug) {
+        Produto produto = produtoRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Produto não encontratdo a partir do slug: " + slug));
+
+        return new ProdutoResponseDto(
+            produto.getId(),
+            produto.getNome(),
+            produto.getSlug(),
+            produto.getDescricao(),
+            produto.getPreco(),
+            produto.getTipo().getId(),
+            produto.getCategoria().getId(),
+            produto.getSku()
+        );
     }
 }

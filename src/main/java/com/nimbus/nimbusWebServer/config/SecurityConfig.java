@@ -39,7 +39,9 @@ public class SecurityConfig {
             "/uploads/**",
             "/users/logout",
             "/produto/public/buscar_produtos",
-            "/produto/public/buscar_imagem_apresentacao_produto"
+            "/produto/public/buscar_imagem_apresentacao_produto",
+            "/produto/public/obter_produto_por_slug",
+            "/produto/public/buscar_imagens_produto"
     };
 
     // Endpoints que requerem autenticação para serem acessados
