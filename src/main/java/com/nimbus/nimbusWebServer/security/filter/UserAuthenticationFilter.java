@@ -7,6 +7,7 @@ import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,31 +33,24 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(checkIfEndpointIsNotPublic(request)) {
             try {
-                System.out.println(">>> [AUTH CHECK] Acessando rota privada: " + request.getRequestURI());
-
                 String token = recoveryToken(request);
-                System.out.println("Token que esta sendo resgatado: " + token);
 
                 if (token == null) {
-                    System.out.println(">>> [AUTH ERROR] Token não encontrado no Header Authorization!");
+                    System.out.println(">>> [AUTH ERROR] Cookie 'accessToken' não encontrado na requisição!");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Token ausente.");
                     return;
                 }
 
+                System.out.println("Token resgatado do Cookie: " + token);
                 String subject = jwtTokenService.getSubjectFromToken(token);
-                System.out.println(">>> [AUTH INFO] Subject extraído do token: " + subject);
 
                 User user = userRepository.findByEmail(subject)
                         .orElseThrow(() -> {
-                            System.out.println(">>> [AUTH ERROR] Usuário não existe no banco de dados: " + subject);
                             return new RuntimeException("Usuário não encontrado");
                         });
 
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
-
-                System.out.println(">>> [AUTH SUCCESS] Usuário encontrado: " + user.getEmail());
-                System.out.println(">>> [AUTH SUCCESS] Roles do usuário: " + userDetails.getAuthorities());
 
                 // Cria um objeto de autenticação do Spring Security
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -67,9 +61,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 // Define o objeto de autenticação no contexto de segurança do Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println(">>> [AUTH CONTEXT] Autenticação definida no SecurityContext com sucesso.");
             } catch (Exception e) {
-                System.out.println(">>> [AUTH EXCEPTION] Falha crítica no filtro: " + e.getMessage());
                 e.printStackTrace(); // Importante para ver o stacktrace completo no log do Render
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
@@ -85,9 +77,14 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     // Recupera o token do cabeçalho Authorization da requisição
     private String recoveryToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            return authorizationHeader.replace("Bearer ", "");
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) return null;
+
+        for (Cookie cookie : cookies) {
+            if ("accessToken".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
         }
         return null;
     }
