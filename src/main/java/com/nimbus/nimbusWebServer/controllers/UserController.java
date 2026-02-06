@@ -1,11 +1,9 @@
 package com.nimbus.nimbusWebServer.controllers;
 
 
-import com.nimbus.nimbusWebServer.dtos.AuthResponseDto;
-import com.nimbus.nimbusWebServer.dtos.CreateUserDto;
-import com.nimbus.nimbusWebServer.dtos.LoginResponseDto;
-import com.nimbus.nimbusWebServer.dtos.LoginUserDto;
+import com.nimbus.nimbusWebServer.dtos.*;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
+import com.nimbus.nimbusWebServer.services.RefreshTokenService;
 import com.nimbus.nimbusWebServer.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +21,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Value("${cookie.params-secure}")
     private Boolean cookieSecure;
@@ -64,6 +65,22 @@ public class UserController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok("Logout realizado com sucesso!");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> atualizarAccessToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
+        String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("accessToken", newAccessToken)
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok("Refresh realizado com sucesso!");
     }
 
 }

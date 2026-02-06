@@ -33,7 +33,7 @@ public class SecurityConfig {
             "/users/login",
             "/auth/me",
             "/users/register",
-            "/auth/refresh",
+            "/users/refresh",
             "/tipo/public/listar_tipos",
             "/categoria/public/buscar_categorias",
             "/uploads/**",
