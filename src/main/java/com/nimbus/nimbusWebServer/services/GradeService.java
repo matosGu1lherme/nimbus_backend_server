@@ -5,6 +5,8 @@ import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import com.nimbus.nimbusWebServer.repositories.GradeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GradeService {
 
@@ -19,5 +21,9 @@ public class GradeService {
     public void incluirGradeProduto(Produto produto, String numeracao) {
         Grade novaGrade = new Grade(produto, numeracao);
         gradeRepository.save(novaGrade);
+    }
+
+    public List<Grade> buscarGradeProduto(Long produtoId) {
+        return gradeRepository.findByProdutoId(produtoId);
     }
 }
