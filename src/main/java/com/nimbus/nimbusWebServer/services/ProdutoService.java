@@ -105,7 +105,8 @@ public class ProdutoService {
                     produto.getPreco(),
                     produto.getTipo().getId(),
                     produto.getCategoria().getId(),
-                    produto.getSku()
+                    produto.getSku(),
+                    produto.getGrade()
             );
             produtosResponseDto.add(novoProdutoResponse);
         }
@@ -163,8 +164,6 @@ public class ProdutoService {
     public ProdutoResponseDto buscarProdutoPorSlug(String slug) {
         Produto produto = produtoRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Produto não encontratdo a partir do slug: " + slug));
-
-        List<String> gradeProduto = gradeService.buscarGradeProduto(produto.getId());
 
         return new ProdutoResponseDto(
             produto.getId(),

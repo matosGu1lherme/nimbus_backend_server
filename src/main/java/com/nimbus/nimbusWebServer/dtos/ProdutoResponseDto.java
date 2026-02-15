@@ -1,5 +1,7 @@
 package com.nimbus.nimbusWebServer.dtos;
 
+import com.nimbus.nimbusWebServer.models.produtos.Grade;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -12,5 +14,5 @@ public record ProdutoResponseDto(
         Long tipo_id,
         Long categoria_id,
         String sku,
-        List<String> numeracoesGrade
+        List<Grade> numeracoesGrade
 ) { }

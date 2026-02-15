@@ -36,15 +36,7 @@ public class ProdutoController {
                 .status(HttpStatus.OK)
                 .body(produtos);
     }
-
-    @GetMapping("/public/buscar_produtos_por_nome_categoria")
-    public ResponseEntity<List<ProdutoResponseDto>> bucarProdutosPorCategora(@RequestParam String categoriaNome) {
-        List<ProdutoResponseDto> produtos = produtoService.buscarProdutosPorNomeDeCategoria(categoriaNome);
-        return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .body(produtos);
-    }
-
+    
     @GetMapping("/public/buscar_imagem_apresentacao_produto")
     public String buscarImagemApresentacaoProduto(@RequestParam Long produtoId) {
         return produtoService.retornarImgApresentacaoProd(produtoId);

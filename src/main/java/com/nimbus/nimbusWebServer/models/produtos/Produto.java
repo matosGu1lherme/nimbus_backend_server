@@ -55,7 +55,7 @@ public class Produto implements Serializable {
     private Categoria categoria;
 
     @OneToMany
-    private Grade grade;
+    private List<Grade> grade;
 
     @ManyToMany
     @JoinTable(
