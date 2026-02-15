@@ -26,15 +26,16 @@ public class ProdutoService {
     private final SkuSequenceService skuSequenceService;
     private final StorageService storageService;
     private final ImagemProdutoRepository imagemProdutoRepository;
+    private final GradeService gradeService;
 
     public ProdutoService(
             ProdutoRepository produtoRepository,
             TipoRepository tipoRepository,
             CategoriaRepository categoriaRepository,
-            TagRepository tagRepository,
             SkuSequenceService skuSequenceService,
             StorageService storageService,
-            ImagemProdutoRepository imagemProdutoRepository
+            ImagemProdutoRepository imagemProdutoRepository,
+            GradeService gradeService
     ) {
         this.produtoRepository = produtoRepository;
         this.tipoRepository = tipoRepository;
@@ -42,6 +43,7 @@ public class ProdutoService {
         this.skuSequenceService = skuSequenceService;
         this.storageService = storageService;
         this.imagemProdutoRepository = imagemProdutoRepository;
+        this.gradeService = gradeService;
     }
 
     @Transactional
@@ -62,6 +64,8 @@ public class ProdutoService {
             e.printStackTrace();
             throw e;
         }
+
+
 
         List<ImagemProduto> imagensProdutoList= new ArrayList<>();
 
@@ -106,25 +110,6 @@ public class ProdutoService {
             produtosResponseDto.add(novoProdutoResponse);
         }
         return produtosResponseDto;
-    }
-
-    public List<ProdutoResponseDto> buscarProdutosPorNomeDeCategoria(String categoriaNome) {
-        List<Produto> produtos = produtoRepository.findByCategoriaNome(categoriaNome);
-        List<ProdutoResponseDto> produtoResponseDtos = new ArrayList<>();
-        for (Produto produto : produtos) {
-            ProdutoResponseDto novoProdutoResponseDto = new ProdutoResponseDto(
-                    produto.getId(),
-                    produto.getNome(),
-                    produto.getSlug(),
-                    produto.getDescricao(),
-                    produto.getPreco(),
-                    produto.getTipo().getId(),
-                    produto.getCategoria().getId(),
-                    produto.getSku()
-            );
-            produtoResponseDtos.add(novoProdutoResponseDto);
-        }
-        return produtoResponseDtos;
     }
 
     public String gerarProdutoSKU(Produto produto) {
@@ -179,6 +164,8 @@ public class ProdutoService {
         Produto produto = produtoRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Produto não encontratdo a partir do slug: " + slug));
 
+        List<String> gradeProduto = gradeService.buscarGradeProduto(produto.getId());
+
         return new ProdutoResponseDto(
             produto.getId(),
             produto.getNome(),
@@ -187,7 +174,8 @@ public class ProdutoService {
             produto.getPreco(),
             produto.getTipo().getId(),
             produto.getCategoria().getId(),
-            produto.getSku()
+            produto.getSku(),
+            produto.getGrade()
         );
     }
 }
