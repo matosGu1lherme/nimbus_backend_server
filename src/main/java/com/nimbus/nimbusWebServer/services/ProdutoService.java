@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.services;
 
+import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.exception.customException.RecursoNaoEncontradoException;
 import com.nimbus.nimbusWebServer.models.produtos.Categoria;
@@ -47,7 +48,7 @@ public class ProdutoService {
     }
 
     @Transactional
-    public void salvarProduto(ProdutoResponseDto produto, MultipartFile[] imagensProduto) {
+    public void salvarProduto(ProdutoRequestDto produto, MultipartFile[] imagensProduto) {
         Produto novoProduto =  new Produto();
         novoProduto.setNome(produto.nome());
         novoProduto.setPreco(produto.preco());
@@ -58,14 +59,14 @@ public class ProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + produto.categoria_id() + " não encontrado.")));
         novoProduto.setSku(gerarProdutoSKU(novoProduto));
 
+
+
         try {
             novoProduto = produtoRepository.save(novoProduto);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
-
 
         List<ImagemProduto> imagensProdutoList= new ArrayList<>();
 
@@ -105,8 +106,7 @@ public class ProdutoService {
                     produto.getPreco(),
                     produto.getTipo().getId(),
                     produto.getCategoria().getId(),
-                    produto.getSku(),
-                    produto.getGrade()
+                    produto.getSku()
             );
             produtosResponseDto.add(novoProdutoResponse);
         }
@@ -173,8 +173,7 @@ public class ProdutoService {
             produto.getPreco(),
             produto.getTipo().getId(),
             produto.getCategoria().getId(),
-            produto.getSku(),
-            produto.getGrade()
+            produto.getSku()
         );
     }
 }

@@ -1,7 +1,9 @@
 package com.nimbus.nimbusWebServer.dtos;
-import java.math.BigDecimal;
 
-public record ProdutoResponseDto(
+import java.math.BigDecimal;
+import java.util.List;
+
+public record ProdutoRequestDto(
         Long id,
         String nome,
         String slug,
@@ -9,5 +11,7 @@ public record ProdutoResponseDto(
         BigDecimal preco,
         Long tipo_id,
         Long categoria_id,
-        String sku
-) { }
+        String sku,
+        List<String> numeracoesGrade
+) {
+}

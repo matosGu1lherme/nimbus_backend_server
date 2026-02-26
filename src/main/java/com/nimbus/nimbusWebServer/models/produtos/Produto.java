@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -54,8 +55,8 @@ public class Produto implements Serializable {
     @ManyToOne
     private Categoria categoria;
 
-    @OneToMany
-    private List<Grade> grade;
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Grade> grade = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -87,6 +88,13 @@ public class Produto implements Serializable {
             this.slug = nomeLimpoAcentos
                     .replaceAll("[^a-z0-9 ]", "")
                     .replaceAll("\\s+", "-");
+        }
+    }
+
+    public void adicionarGrade(List<String> numeracoes) {
+        for(String numeracao : numeracoes) {
+            Grade novaGrade = new Grade(this, numeracao);
+            grade.add(novaGrade);
         }
     }
 }

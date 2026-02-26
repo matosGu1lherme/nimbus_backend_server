@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.controllers;
 
+import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import com.nimbus.nimbusWebServer.services.ProdutoService;
@@ -22,7 +23,7 @@ public class ProdutoController {
 
     @PostMapping("/salvar_produto")
     public String criarProduto(
-            @RequestPart("produto") ProdutoResponseDto produtoJson,
+            @RequestPart("produto") ProdutoRequestDto produtoJson,
             @RequestPart("imagens") MultipartFile[] imagens
     ) {
         produtoService.salvarProduto(produtoJson, imagens);

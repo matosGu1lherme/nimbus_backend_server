@@ -55,7 +55,15 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
+                .path("/")
+                .maxAge(0) // maxAge(0) é o que faz o navegador deletar o cookie
+                .build();
+
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
@@ -63,7 +71,9 @@ public class UserController {
                 .maxAge(0)
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
         return ResponseEntity.ok("Logout realizado com sucesso!");
     }
 
