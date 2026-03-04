@@ -1,11 +1,11 @@
 package com.nimbus.nimbusWebServer.models.produtos;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

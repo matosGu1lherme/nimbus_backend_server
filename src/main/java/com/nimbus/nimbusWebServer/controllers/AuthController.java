@@ -17,16 +17,6 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @GetMapping("/refresh")
-    public ResponseEntity<AccessTokenResponseDto> atualizarAccessToken(
-            @CookieValue("refreshToken") String refreshToken
-    ) {
-        String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new AccessTokenResponseDto(newAccessToken));
-    }
-
     @GetMapping("/me")
     public ResponseEntity<?> obterDadosUserPorCookie(
             @CookieValue(value = "refreshToken", required = false) String refreshToken

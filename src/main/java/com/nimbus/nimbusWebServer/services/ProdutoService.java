@@ -3,6 +3,7 @@ package com.nimbus.nimbusWebServer.services;
 import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.exception.customException.RecursoNaoEncontradoException;
+import com.nimbus.nimbusWebServer.mapper.ProdutoMapper;
 import com.nimbus.nimbusWebServer.models.produtos.Categoria;
 import com.nimbus.nimbusWebServer.models.produtos.ImagemProduto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
@@ -27,7 +28,7 @@ public class ProdutoService {
     private final SkuSequenceService skuSequenceService;
     private final StorageService storageService;
     private final ImagemProdutoRepository imagemProdutoRepository;
-    private final GradeService gradeService;
+    private final ProdutoMapper produtoMapper;
 
     public ProdutoService(
             ProdutoRepository produtoRepository,
@@ -36,7 +37,7 @@ public class ProdutoService {
             SkuSequenceService skuSequenceService,
             StorageService storageService,
             ImagemProdutoRepository imagemProdutoRepository,
-            GradeService gradeService
+            ProdutoMapper produtoMapper
     ) {
         this.produtoRepository = produtoRepository;
         this.tipoRepository = tipoRepository;
@@ -44,7 +45,7 @@ public class ProdutoService {
         this.skuSequenceService = skuSequenceService;
         this.storageService = storageService;
         this.imagemProdutoRepository = imagemProdutoRepository;
-        this.gradeService = gradeService;
+        this.produtoMapper = produtoMapper;
     }
 
     @Transactional
@@ -59,7 +60,7 @@ public class ProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + produto.categoria_id() + " não encontrado.")));
         novoProduto.setSku(gerarProdutoSKU(novoProduto));
 
-
+        novoProduto.adicionarGrade(produto.numeracoesGrade());
 
         try {
             novoProduto = produtoRepository.save(novoProduto);
@@ -98,16 +99,7 @@ public class ProdutoService {
         List<Produto> produtos = produtoRepository.findAll();
         List<ProdutoResponseDto> produtosResponseDto = new ArrayList();
         for (Produto produto : produtos) {
-            ProdutoResponseDto novoProdutoResponse = new ProdutoResponseDto(
-                    produto.getId(),
-                    produto.getNome(),
-                    produto.getSlug(),
-                    produto.getDescricao(),
-                    produto.getPreco(),
-                    produto.getTipo().getId(),
-                    produto.getCategoria().getId(),
-                    produto.getSku()
-            );
+            ProdutoResponseDto novoProdutoResponse = produtoMapper.toProdutoResponseDto(produto);
             produtosResponseDto.add(novoProdutoResponse);
         }
         return produtosResponseDto;
@@ -165,15 +157,6 @@ public class ProdutoService {
         Produto produto = produtoRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Produto não encontratdo a partir do slug: " + slug));
 
-        return new ProdutoResponseDto(
-            produto.getId(),
-            produto.getNome(),
-            produto.getSlug(),
-            produto.getDescricao(),
-            produto.getPreco(),
-            produto.getTipo().getId(),
-            produto.getCategoria().getId(),
-            produto.getSku()
-        );
+        return produtoMapper.toProdutoResponseDto(produto);
     }
 }

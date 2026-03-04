@@ -33,6 +33,7 @@ public class SecurityConfig {
             "/users/login",
             "/auth/me",
             "/users/register",
+            "/users/register_store_user",
             "/users/refresh",
             "/tipo/public/listar_tipos",
             "/categoria/public/buscar_categorias",

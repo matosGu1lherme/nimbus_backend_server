@@ -37,6 +37,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PostMapping("/register_store_user")
+    public ResponseEntity<Void> createStoreUser(@RequestBody CreateUserDto createUserDto) {
+        userService.createStoreUser(createUserDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginUserDto loginUserDto, HttpServletResponse response) {
         String refreshToken = userService.authenticateUser(loginUserDto);
@@ -60,7 +66,7 @@ public class UserController {
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
                 .path("/")
-                .maxAge(0) // maxAge(0) é o que faz o navegador deletar o cookie
+                .maxAge(0)
                 .build();
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
@@ -86,7 +92,7 @@ public class UserController {
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
                 .path("/")
-                .maxAge(0)
+                .maxAge(3600)
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
