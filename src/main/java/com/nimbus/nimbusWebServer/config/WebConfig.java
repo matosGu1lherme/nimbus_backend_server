@@ -23,12 +23,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String uploadPath = "file:" + uploadDir;
-
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(uploadPath);
-    }
 }
