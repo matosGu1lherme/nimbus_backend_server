@@ -51,6 +51,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
+                .domain(".nimbusloja.com.br")
                 .path("/")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
