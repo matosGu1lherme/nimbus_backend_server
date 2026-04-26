@@ -31,6 +31,9 @@ public class UserController {
     @Value("${cookie.params-sameSite}")
     private String cookieSameSite;
 
+    @Value("${cookie.cookie-domain:}")
+    private String cookieDomain;
+
     @PostMapping("/register")
     public ResponseEntity<Void> createUser(@RequestBody CreateUserDto createUserDto) {
         userService.createUser(createUserDto);
@@ -51,7 +54,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
-                .domain(".nimbusloja.com.br")
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
@@ -66,6 +69,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -74,6 +78,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -92,6 +97,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(3600)
                 .build();

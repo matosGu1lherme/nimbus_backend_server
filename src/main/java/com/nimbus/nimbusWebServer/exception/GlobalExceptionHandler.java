@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("Ocorreu um erro de concorrência. Por favor, tente novamente mais tarde");
+                .body("Ocorreu um erro de concorrência. Por favor, tente novamente mais tarde_1");
     }
 
     @ExceptionHandler(TokenExpiradoException.class)
