@@ -15,6 +15,9 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -60,7 +63,10 @@ public class UserController {
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return ResponseEntity.ok("Autenticado com sucesso!");
+
+        Map<String, String> resposta = new HashMap<>();
+        resposta.put("message", "Autenticado com sucesso!");
+        return ResponseEntity.ok(resposta);
     }
 
     @PostMapping("/logout")
@@ -104,6 +110,13 @@ public class UserController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok("Refresh realizado com sucesso!");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> obterDadosUserPorCookie(
+            @CookieValue(value = "accessToken", required = false) String refreshToken
+    ) {
+        return ResponseEntity.ok().body("teste");
     }
 
 }

@@ -17,19 +17,5 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> obterDadosUserPorCookie(
-            @CookieValue(value = "refreshToken", required = false) String refreshToken
-    ) {
-        if(refreshToken == null || refreshToken.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sessão expirada ou inexistente.");
-        }
 
-        try {
-            UserDataInfoTokenDto userDataInfoTokenDto = refreshTokenService.findUserInfoByToken(refreshToken);
-            return ResponseEntity.ok(userDataInfoTokenDto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido.");
-        }
-    }
  }
