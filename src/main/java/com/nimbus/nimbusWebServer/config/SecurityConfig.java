@@ -49,7 +49,8 @@ public class SecurityConfig {
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
             "/categoria/salvar_categoria",
             "/tipo/salvar_tipo",
-            "/produto/salvar_produto"
+            "/produto/salvar_produto",
+            "users/me"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente

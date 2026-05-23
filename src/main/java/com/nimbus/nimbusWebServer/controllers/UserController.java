@@ -2,6 +2,8 @@ package com.nimbus.nimbusWebServer.controllers;
 
 
 import com.nimbus.nimbusWebServer.dtos.*;
+import com.nimbus.nimbusWebServer.models.user.User;
+import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import com.nimbus.nimbusWebServer.services.RefreshTokenService;
 import com.nimbus.nimbusWebServer.services.UserService;
@@ -25,8 +27,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired AccessTokenService accessTokenService;
+
     @Autowired
     private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${cookie.params-secure}")
     private Boolean cookieSecure;
@@ -114,9 +121,18 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> obterDadosUserPorCookie(
-            @CookieValue(value = "accessToken", required = false) String refreshToken
+            @CookieValue(value = "accessToken", required = false) String accessToken
     ) {
-        return ResponseEntity.ok().body("teste");
+        String email = accessTokenService.getSubjectFromToken(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Erro ao buscar usuario /me"));
+
+        return ResponseEntity.ok(Map.of(
+                "loggedIn", true,
+                "email", email,
+                "usuario", user.getNome(),
+                "id", user.getId()
+        ));
     }
 
 }
