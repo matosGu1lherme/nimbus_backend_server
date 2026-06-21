@@ -31,6 +31,7 @@ public class Produto implements Serializable {
     @Column(unique = true, nullable = false)
     private String slug;
 
+    @Column(length = 1000)
     private String descricao;
 
     @NotNull

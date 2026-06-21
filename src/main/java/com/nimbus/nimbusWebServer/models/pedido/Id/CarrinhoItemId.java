@@ -1,5 +1,6 @@
 package com.nimbus.nimbusWebServer.models.pedido.Id;
 
+import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 @Getter
@@ -15,7 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class CarrinhoItemId {
 
-    private Long carrinhoId;
+    private UUID userId;
     private Long produtoId;
 
     @Override
@@ -23,12 +25,12 @@ public class CarrinhoItemId {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CarrinhoItemId that = (CarrinhoItemId) o;
-        return Objects.equals(carrinhoId, that.carrinhoId) &&
+        return Objects.equals(userId, that.userId) &&
                 Objects.equals(produtoId, that.produtoId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(carrinhoId, produtoId);
+        return Objects.hash(userId, produtoId);
     }
 }

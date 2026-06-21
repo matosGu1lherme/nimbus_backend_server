@@ -50,14 +50,16 @@ public class SecurityConfig {
             "/categoria/salvar_categoria",
             "/tipo/salvar_tipo",
             "/produto/salvar_produto",
-            "users/me"
+            "/users/me",
+            "/carrinho/adicionar_ao_carrinho"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
     public static final String [] ENDPOINTS_CUSTOMER = {
             "/categoria/public/buscar_categorias",
             "/tipo/public/listar_tipos",
-            "/produto/public/buscar_produtos"
+            "/produto/public/buscar_produtos",
+            "/carrinho/adicionar_ao_carrinho"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.lang.reflect.Type;
+
 @Entity
 @Table(name = "CARRINHO_ITEM")
 @Getter
@@ -19,12 +21,12 @@ public class CarrinhoItem {
     @EmbeddedId
     private CarrinhoItemId id =  new CarrinhoItemId();
 
-    @ManyToOne
-    @MapsId("carrinhoId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("userId")
     @JoinColumn(name = "carrinho_id")
     private Carrinho carrinho;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("produtoId")
     @JoinColumn(name = "produto_id")
     private Produto produto;

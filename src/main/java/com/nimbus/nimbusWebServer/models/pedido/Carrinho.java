@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,10 +20,13 @@ import java.util.UUID;
 public class Carrinho {
 
     @Id
-    private UUID id;
+    private UUID userId;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_usuario")
     private User usuario;
+
+    @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarrinhoItem> carrinhoItems = new ArrayList<>();
 }
