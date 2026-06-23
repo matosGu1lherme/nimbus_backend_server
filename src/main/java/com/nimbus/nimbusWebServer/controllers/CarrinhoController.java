@@ -1,14 +1,14 @@
 package com.nimbus.nimbusWebServer.controllers;
 
-import com.nimbus.nimbusWebServer.dtos.ItemCarrinhoRequstDto;
+import com.nimbus.nimbusWebServer.dtos.ItemCarrinhoRequestDto;
 import com.nimbus.nimbusWebServer.services.CarrinhoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/carrinho")
@@ -18,14 +18,18 @@ public class CarrinhoController {
     private CarrinhoService carrinhoService;
 
     @PostMapping("/adicionar_ao_carrinho")
-    public ResponseEntity<?> adicionarItemCarrinho(@RequestBody ItemCarrinhoRequstDto itemCarrinhoRequstDto) {
+    public ResponseEntity<?> adicionarItemCarrinho(@RequestBody ItemCarrinhoRequestDto itemCarrinhoRequestDto) {
         try {
-            carrinhoService.adicionarItemCarrinho(itemCarrinhoRequstDto);
+            carrinhoService.adicionarItemCarrinho(itemCarrinhoRequestDto);
         } catch (RuntimeException e) {
             System.out.println(e.fillInStackTrace());;
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> buscarItensCarrinho(@RequestBody)
+    @GetMapping("/buscar_itens_carrinho/{id}")
+    public ResponseEntity<?> buscarItensCarrinho(@PathVariable("userId") UUID id) {
+        carrinhoService.buscarItensCarrinhoPorId(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

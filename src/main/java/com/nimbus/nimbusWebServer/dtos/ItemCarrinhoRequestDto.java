@@ -3,7 +3,7 @@ package com.nimbus.nimbusWebServer.dtos;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record ItemCarrinhoRequstDto(
+public record ItemCarrinhoRequestDto(
         String email,
         Long produtoId,
 
