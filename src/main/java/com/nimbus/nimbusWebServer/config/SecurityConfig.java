@@ -51,7 +51,8 @@ public class SecurityConfig {
             "/tipo/salvar_tipo",
             "/produto/salvar_produto",
             "/users/me",
-            "/carrinho/adicionar_ao_carrinho"
+            "/carrinho/adicionar_ao_carrinho",
+            "/carrinho/buscar_itens_carrinho"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
@@ -59,7 +60,8 @@ public class SecurityConfig {
             "/categoria/public/buscar_categorias",
             "/tipo/public/listar_tipos",
             "/produto/public/buscar_produtos",
-            "/carrinho/adicionar_ao_carrinho"
+            "/carrinho/adicionar_ao_carrinho",
+            "/carrinho/buscar_itens_carrinho"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador
