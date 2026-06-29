@@ -29,7 +29,7 @@ public class CarrinhoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/buscar_itens_carrinho/{id}")
+    @GetMapping("/buscar_itens_carrinho/{userId}")
     public ResponseEntity<?> buscarItensCarrinho(@PathVariable("userId") UUID id) {
         List<ItemCarrinhoResponseDto> response = carrinhoService.buscarItensCarrinhoPorId(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
