@@ -57,22 +57,8 @@ public class CarrinhoService {
                     return novoItem;
                 });
 
-        int quantidadeAtual = Optional.ofNullable(carrinhoItem.getQuantidade()).orElse(0);
-        carrinhoItem.setQuantidade((quantidadeAtual + itemCarrinhoRequestDto.quantidade()));
-    }
-
-    @Transactional
-    public void removerItemCarrinho(ItemCarrinhoRequestDto itemCarrinhoRequestDto) {
-        User user = userRepository.findByEmail(itemCarrinhoRequestDto.email())
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar um carrinho vinculado ao email do usúario!"));
-
-        CarrinhoItem carrinhoItem = carrinhoItemRepository.findByCarrinhoUserIdAndProdutoId(user.getId(), itemCarrinhoRequestDto.produtoId())
-                .orElseThrow(() -> new RuntimeException("Não foi encontrado item no carrinho para realizar remoção"));
-
-        carrinhoItem.setQuantidade(carrinhoItem.getQuantidade() - itemCarrinhoRequestDto.quantidade());
-        if(carrinhoItem.getQuantidade() <= 0) {
-            carrinhoItemRepository.delete(carrinhoItem);
-        }
+        //int quantidadeAtual = Optional.ofNullable(carrinhoItem.getQuantidade()).orElse(0);
+        carrinhoItem.setQuantidade((itemCarrinhoRequestDto.quantidade()));
     }
 
     public List<ItemCarrinhoResponseDto> buscarItensCarrinhoPorId(UUID id) {
