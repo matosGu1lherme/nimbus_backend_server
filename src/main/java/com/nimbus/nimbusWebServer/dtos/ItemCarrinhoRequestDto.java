@@ -11,6 +11,10 @@ public record ItemCarrinhoRequestDto(
         @Positive(message = "A quantidade deve ser maior que zero")
         Integer quantidade,
 
+        @NotNull(message = "A tamanho é obrigatória")
+        @Positive(message = "A tamanho deve ser maior que zero")
+        Integer tamanho,
+
         @NotNull(message = "Valor no momento da compra é obrigatório")
         @Positive(message = "Valor no momento da compra é obrigatório")
         Double valorMomentoCompra

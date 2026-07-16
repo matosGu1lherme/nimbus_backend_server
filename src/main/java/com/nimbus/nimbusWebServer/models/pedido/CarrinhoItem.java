@@ -32,5 +32,8 @@ public class CarrinhoItem {
     private Produto produto;
 
     private Integer quantidade;
+
+    private Integer tamanho;
+
     private Double valorMomentoCompra;
 }

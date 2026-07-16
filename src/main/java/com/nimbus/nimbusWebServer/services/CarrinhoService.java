@@ -51,13 +51,13 @@ public class CarrinhoService {
                     CarrinhoItem novoItem= new CarrinhoItem();
                     novoItem.setCarrinho(carrinho);
                     novoItem.setProduto(produto);
+                    novoItem.setTamanho(itemCarrinhoRequestDto.tamanho());
                     novoItem.setValorMomentoCompra(itemCarrinhoRequestDto.valorMomentoCompra());
 
                     carrinho.getCarrinhoItems().add(novoItem);
                     return novoItem;
                 });
 
-        //int quantidadeAtual = Optional.ofNullable(carrinhoItem.getQuantidade()).orElse(0);
         carrinhoItem.setQuantidade((itemCarrinhoRequestDto.quantidade()));
     }
 
