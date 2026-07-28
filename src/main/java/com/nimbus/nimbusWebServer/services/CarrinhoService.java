@@ -36,7 +36,7 @@ public class CarrinhoService {
 
     @Transactional
     public void adicionarItemCarrinho(ItemCarrinhoRequestDto itemCarrinhoRequestDto) {
-        User userCarrinho = userRepository.findByEmail(itemCarrinhoRequestDto.email())
+        User userCarrinho = userRepository.findById(itemCarrinhoRequestDto.userId())
                 .orElseThrow(() -> new RuntimeException("Não foi possivel criar o carrinho do usuario, email não encontrado!"));
 
         Carrinho carrinho = carrinhoRepository.findById(userCarrinho.getId())

@@ -3,8 +3,10 @@ package com.nimbus.nimbusWebServer.dtos;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.UUID;
+
 public record ItemCarrinhoRequestDto(
-        String email,
+        UUID userId,
         Long produtoId,
 
         @NotNull(message = "A quantidade é obrigatória")
