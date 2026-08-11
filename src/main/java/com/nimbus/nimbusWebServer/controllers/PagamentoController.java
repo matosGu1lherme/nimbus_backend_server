@@ -23,7 +23,7 @@ public class PagamentoController {
     @Autowired
     private MercadoPagoService mpService;
 
-    @PostMapping("/gerar_pedido")
+    @PostMapping("/finalizar_compra")
     public ResponseEntity<?> enviarPagamento(@Valid @RequestBody CheckoutMercadoPagoRequestDto checkoutMpDto) {
         try {
             Order order = mpService.finalizarCompraMp(checkoutMpDto);
