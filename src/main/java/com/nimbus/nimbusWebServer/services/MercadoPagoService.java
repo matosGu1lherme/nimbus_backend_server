@@ -30,7 +30,7 @@ public class MercadoPagoService {
                 .type(checkoutMpDto.paymentMethod())
                 .id(checkoutMpDto.paymentMethodId())
                 .token(checkoutMpDto.token())
-                .installments(checkoutMpDto.Installments())
+                .installments(checkoutMpDto.installments())
                 .build();
 
         var payment = OrderPaymentRequest.builder()
@@ -54,11 +54,11 @@ public class MercadoPagoService {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("X-Idempotency-Key", UUID.randomUUID().toString());
-        var requesOptions = MPRequestOptions.builder()
+        var requestOptions = MPRequestOptions.builder()
                 .customHeaders(headers)
                 .build();
 
         var client = new OrderClient();
-        return client.create(orderRequest, requesOptions);
+        return client.create(orderRequest, requestOptions);
     }
 }

@@ -22,7 +22,7 @@ public record CheckoutMercadoPagoRequestDto(
         Payer payer,
 
         String token,
-        Integer Installments,
+        Integer installments,
         String paymentMethodId,     // bandeira (master, visa, etc.)
         String issuerId
 ) {
