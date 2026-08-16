@@ -1,11 +1,8 @@
 package com.nimbus.nimbusWebServer.controllers;
 
-import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.order.Order;
-import com.nimbus.nimbusWebServer.dtos.CheckoutMercadoPagoRequestDto;
-import com.nimbus.nimbusWebServer.dtos.RespostaPedidoDto;
-import com.nimbus.nimbusWebServer.services.MercadoPagoService;
+import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
+import com.nimbus.nimbusWebServer.models.pedido.Pedido;
+import com.nimbus.nimbusWebServer.services.PedidoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class PagamentoController {
 
     @Autowired
-    private MercadoPagoService mpService;
+    private PedidoService pedidoService;
 
     @PostMapping("/finalizar_compra")
-    public ResponseEntity<?> enviarPagamento(@Valid @RequestBody CheckoutMercadoPagoRequestDto checkoutMpDto) {
-        try {
-            Order order = mpService.finalizarCompraMp(checkoutMpDto);
-
-            return switch (order.getStatus()) {
-                case "processed" -> ResponseEntity.ok(new RespostaPedidoDto(order.getId(), order.getStatus(), order.getStatusDetail()));
-                default ->  ResponseEntity.ok(new RespostaPedidoDto(order.getId(), order.getStatus(), order.getStatusDetail()));
-            };
-        } catch (MPApiException e) {
-            log.error("[MercadoPagoService] Erro da API MP: {}", e.getApiResponse().getContent());
-            return ResponseEntity.badRequest().body("Não foi possível processar o pagamento");
-        } catch (MPException e) {
-            log.error("[MercadoPagoService] Erro de comunicação com MP", e);
-            return ResponseEntity.internalServerError().body("Erro ao processar pagamento.");
-        }
+    public ResponseEntity<?> enviarPagamento(@Valid @RequestBody CheckoutRequestDto checkoutMpDto) {
+        Pedido pedido = pedidoService.processarPagamento(checkoutMpDto);
     }
 }

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 
-public record CheckoutMercadoPagoRequestDto(
+public record CheckoutRequestDto(
         @NotBlank(message = "paymentMethod é obrigatório")
         @Pattern(regexp = "credit_card|pix|boleto", message = "paymentMethod deve ser credit_card, pix ou boleto")
         String paymentMethod,       // "credit_card" | "pix" | "boleto"

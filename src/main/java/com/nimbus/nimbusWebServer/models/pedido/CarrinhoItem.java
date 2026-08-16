@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "CARRINHO_ITEM")
@@ -35,5 +36,6 @@ public class CarrinhoItem {
 
     private Integer tamanho;
 
-    private Double valorMomentoCompra;
+    @Column(name = "valor_momento_compra", precision = 10, scale = 2, nullable = false)
+    private BigDecimal valorMomentoCompra;
 }
