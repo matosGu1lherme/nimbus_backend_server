@@ -25,6 +25,6 @@ public class PedidoService {
 
     @Transactional
     protected Pedido criarPedidoPeloStatus(CheckoutRequestDto dto, Order order) {
-        Pedido pedido new Pedido()
+        Pedido pedido new Pedido.gerarPedido(dto, order);
     }
 }

@@ -1,13 +1,13 @@
 package com.nimbus.nimbusWebServer.models.pedido;
 
+import com.mercadopago.resources.order.Order;
+import com.mercadopago.resources.payment.PaymentStatus;
+import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
 import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.enums.TipoDocumentoComprador;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import java.util.UUID;
 @Table(name = "PEDIDO")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pedido {
@@ -65,5 +66,27 @@ public class Pedido {
     private Instant pagoEm;
     private Instant expiraEm;
 
+    private static StatusPedido traduzStatusMP(String statusMercadoPago) {
+        return switch (statusMercadoPago) {
+            case PaymentStatus.APPROVED -> StatusPedido.APROVADO;
+            case PaymentStatus.AUTHORIZED -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            case PaymentStatus.IN_PROCESS, PaymentStatus.PENDING -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            case PaymentStatus.REJECTED -> StatusPedido.RECUSADO;
+            case PaymentStatus.CANCELLED -> StatusPedido.CANCELADO;
+            case PaymentStatus.REFUNDED, PaymentStatus.CHARGED_BACK -> StatusPedido.CANCELADO;
+            case PaymentStatus.IN_MEDIATION -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            default -> throw new IllegalStateException(
+                    "Não foi encontrada tradução para o status Mercado Pago recebido: [%s]".formatted(statusMercadoPago)
+            );
+        };
+    }
+
+    public static Pedido gerarPedido(CheckoutRequestDto dto, Order order) {
+        Pedido novoPedido = new Pedido();
+
+        novoPedido.setServicoPagamento(dto.paymentMethod());
+
+        novoPedido.setStatusPedido(traduzStatusMP( order.getStatus()));
+    }
 }
 

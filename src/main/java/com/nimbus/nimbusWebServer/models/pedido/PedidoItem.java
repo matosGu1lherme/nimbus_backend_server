@@ -35,5 +35,4 @@ public class PedidoItem {
     @Column(name = "preco_unitario", precision = 10, scale = 2, nullable = false)
     private BigDecimal precoUnitario;
 
-
 }
