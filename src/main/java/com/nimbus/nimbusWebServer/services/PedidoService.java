@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class PedidoService {
     @Autowired
@@ -25,6 +26,8 @@ public class PedidoService {
 
     @Transactional
     protected Pedido criarPedidoPeloStatus(CheckoutRequestDto dto, Order order) {
-        Pedido pedido new Pedido.gerarPedido(dto, order);
+        Pedido pedido = Pedido.gerarPedido(dto, order);
+
+        return pedido;
     }
 }

@@ -3,6 +3,7 @@ package com.nimbus.nimbusWebServer.dtos;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ItemCarrinhoRequestDto(
@@ -19,6 +20,6 @@ public record ItemCarrinhoRequestDto(
 
         @NotNull(message = "Valor no momento da compra é obrigatório")
         @Positive(message = "Valor no momento da compra é obrigatório")
-        Double valorMomentoCompra
+        BigDecimal valorMomentoCompra
 ) {
 }

@@ -3,6 +3,7 @@ package com.nimbus.nimbusWebServer.models.pedido;
 import com.mercadopago.resources.order.Order;
 import com.mercadopago.resources.payment.PaymentStatus;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
+import com.nimbus.nimbusWebServer.dtos.ItemPedidoDto;
 import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.enums.TipoDocumentoComprador;
@@ -27,9 +28,7 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "numero_pedido", unique = true, nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_numero_pedido")
-    @SequenceGenerator(name = "seq_numero_pedido", sequenceName = "numero_pedido_seq", allocationSize = 1)
+    @Column(name = "numero_pedido", unique = true, nullable = false, insertable = false, updatable = false)
     private Long numeroPedido;
 
     private String servicoPagamento;
@@ -86,7 +85,26 @@ public class Pedido {
 
         novoPedido.setServicoPagamento(dto.paymentMethod());
 
-        novoPedido.setStatusPedido(traduzStatusMP( order.getStatus()));
+        novoPedido.setStatusPedido(traduzStatusMP(order.getStatus()));
+        novoPedido.setStatusDetalhe(order.getStatusDetail());
+        novoPedido.setMetodoPagamento(MetodoPagamento.tranformaMetodoPagamento(order.getTransactions().getPayments().getFirst().getId()));
+        novoPedido.setParcelas(dto.installments());
+        novoPedido.setBandeira(order.getTransactions().getPayments().getFirst().getPaymentMethod().getId());
+
+        novoPedido.setCompradorNome(dto.payer().name());
+        novoPedido.setCompradorEmail(dto.payer().email());
+
+        List<PedidoItem> itensPedido = new ArrayList<>();
+        List<ItemPedidoDto> pedidosDto = dto.itensOrdemPedido();
+
+        for (ItemPedidoDto pedidoDto : pedidosDto) {
+            PedidoItem novoItemPedido = PedidoItem.criarItemDto(pedidoDto, novoPedido);
+            itensPedido.add(novoItemPedido);
+        }
+
+        novoPedido.setItens(itensPedido);
+
+        return  novoPedido;
     }
 }
 

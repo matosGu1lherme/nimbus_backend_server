@@ -1,6 +1,8 @@
 package com.nimbus.nimbusWebServer.models.pedido;
 
+import com.nimbus.nimbusWebServer.dtos.ItemPedidoDto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
+import com.nimbus.nimbusWebServer.repositories.ProdutoRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,4 +37,17 @@ public class PedidoItem {
     @Column(name = "preco_unitario", precision = 10, scale = 2, nullable = false)
     private BigDecimal precoUnitario;
 
+    public static PedidoItem criarItemDto(ItemPedidoDto dto, Pedido pedido) {
+        PedidoItem pedidoItem = new PedidoItem();
+
+        Produto produtoItem = new Produto();
+        produtoItem.setId(dto.idProduto());
+
+        pedidoItem.setPedido(pedido);
+        pedidoItem.setProduto(produtoItem);
+        pedidoItem.setQuantidade(dto.quantidade());
+        pedidoItem.setPrecoUnitario(dto.precoNoMomento());
+
+        return pedidoItem;
+    }
 }
