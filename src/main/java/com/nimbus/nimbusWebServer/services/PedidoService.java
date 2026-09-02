@@ -17,17 +17,16 @@ public class PedidoService {
     private MercadoPagoService mercadoPagoService;
 
     public ResponsePedidoDto processarPagamento(CheckoutRequestDto checkoutRequestDto) throws MPException, MPApiException {
-        Order order = mercadoPagoService.finalizarCompraMp(checkoutRequestDto);
+        Pedido pedido = criarPedido(checkoutRequestDto);
 
-        Pedido pedido = criarPedidoPeloStatus(checkoutRequestDto, order);
+        Order order = mercadoPagoService.finalizarCompraMp(checkoutRequestDto);
 
         return new ResponsePedidoDto(pedido.getNumeroPedido(), pedido.getStatusPedido(), pedido.getStatusDetalhe());
     }
 
     @Transactional
-    protected Pedido criarPedidoPeloStatus(CheckoutRequestDto dto, Order order) {
-        Pedido pedido = Pedido.gerarPedido(dto, order);
-
+    protected Pedido criarPedido(CheckoutRequestDto dto) {
+        Pedido pedido = Pedido.gerarPedido(dto);
         return pedido;
     }
 }

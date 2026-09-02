@@ -29,7 +29,7 @@ public class Pedido {
     private UUID id;
 
     @Column(name = "numero_pedido", unique = true, nullable = false, insertable = false, updatable = false)
-    private Long numeroPedido;
+     private Long numeroPedido;
 
     private String servicoPagamento;
 
@@ -80,16 +80,16 @@ public class Pedido {
         };
     }
 
-    public static Pedido gerarPedido(CheckoutRequestDto dto, Order order) {
+    public static Pedido gerarPedido(CheckoutRequestDto dto) {
         Pedido novoPedido = new Pedido();
 
         novoPedido.setServicoPagamento(dto.paymentMethod());
 
-        novoPedido.setStatusPedido(traduzStatusMP(order.getStatus()));
-        novoPedido.setStatusDetalhe(order.getStatusDetail());
-        novoPedido.setMetodoPagamento(MetodoPagamento.tranformaMetodoPagamento(order.getTransactions().getPayments().getFirst().getId()));
+        novoPedido.setStatusPedido(StatusPedido.AGUARDANDO_PAGAMENTO);
+        novoPedido.setStatusDetalhe("Criado pedido aguardando pagamento");
+        novoPedido.setMetodoPagamento(MetodoPagamento.tranformaMetodoPagamento(dto.paymentMethod()));
         novoPedido.setParcelas(dto.installments());
-        novoPedido.setBandeira(order.getTransactions().getPayments().getFirst().getPaymentMethod().getId());
+        novoPedido.setBandeira(dto.paymentMethodId());
 
         novoPedido.setCompradorNome(dto.payer().name());
         novoPedido.setCompradorEmail(dto.payer().email());
