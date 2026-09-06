@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public record CheckoutRequestDto(
         @NotBlank(message = "paymentMethod é obrigatório")
@@ -27,6 +28,7 @@ public record CheckoutRequestDto(
         Integer installments,
         String paymentMethodId,     // bandeira (master, visa, etc.)
         String issuerId,
+        String usuarioId,
 
         List<ItemPedidoDto> itensOrdemPedido
 ) {

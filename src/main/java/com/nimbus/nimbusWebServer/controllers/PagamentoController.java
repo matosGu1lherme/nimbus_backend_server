@@ -25,7 +25,7 @@ public class PagamentoController {
     private PedidoService pedidoService;
 
     @PostMapping("/finalizar_compra")
-    public ResponseEntity<?> enviarPagamento(@Valid @RequestBody CheckoutRequestDto checkoutMpDto) {
+    public ResponseEntity<?> finalizarPagamento(@Valid @RequestBody CheckoutRequestDto checkoutMpDto) {
         try {
             ResponsePedidoDto responsePedidoDto = pedidoService.processarPagamento(checkoutMpDto);
 
@@ -40,6 +40,11 @@ public class PagamentoController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro de comunicação com o mercado pago");
+        } catch (Exception e) {
+            log.error("Erro inesperado ao efetivarPagamento", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro inesperado ao finalizarPagamento");
         }
     }
 }

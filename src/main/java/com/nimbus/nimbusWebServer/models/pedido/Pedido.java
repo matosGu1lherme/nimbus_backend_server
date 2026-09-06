@@ -7,8 +7,11 @@ import com.nimbus.nimbusWebServer.dtos.ItemPedidoDto;
 import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.enums.TipoDocumentoComprador;
+import com.nimbus.nimbusWebServer.models.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -28,15 +31,17 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "numero_pedido", unique = true, nullable = false, insertable = false, updatable = false)
-     private Long numeroPedido;
+    @Column(name = "numero_pedido", unique = true, nullable = false, insertable = false, updatable = false, columnDefinition = "BIGSERIAL")
+    private Long numeroPedido;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private User usuario;
 
     private String servicoPagamento;
 
     @Column(name = "order_id", unique = true)
     private String orderId;
-
-    private String paymentId;
 
     @Enumerated(EnumType.STRING)
     private StatusPedido statusPedido;
@@ -60,8 +65,13 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<PedidoItem> itens = new ArrayList<>();
 
+    @CreationTimestamp
+    @Column(updatable = false)
     private Instant criadoEm;
+
+    @UpdateTimestamp
     private Instant atualizadoEm;
+
     private Instant pagoEm;
     private Instant expiraEm;
 
@@ -91,8 +101,14 @@ public class Pedido {
         novoPedido.setParcelas(dto.installments());
         novoPedido.setBandeira(dto.paymentMethodId());
 
+        User usuarioPedido = new User();
+        usuarioPedido.setId(UUID.fromString(dto.usuarioId()));
+        novoPedido.setUsuario(usuarioPedido);
+
         novoPedido.setCompradorNome(dto.payer().name());
         novoPedido.setCompradorEmail(dto.payer().email());
+        novoPedido.setCompradorTipoDocumento(TipoDocumentoComprador.fromValor(dto.payer().identification().type()));
+        novoPedido.setCompradorNumeroDocumento(dto.payer().identification().number());
 
         List<PedidoItem> itensPedido = new ArrayList<>();
         List<ItemPedidoDto> pedidosDto = dto.itensOrdemPedido();
