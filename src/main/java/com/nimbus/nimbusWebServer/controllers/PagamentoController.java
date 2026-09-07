@@ -3,7 +3,7 @@ package com.nimbus.nimbusWebServer.controllers;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
-import com.nimbus.nimbusWebServer.dtos.ResponsePedidoDto;
+import com.nimbus.nimbusWebServer.dtos.PedidoResponseDto;
 import com.nimbus.nimbusWebServer.models.pedido.Pedido;
 import com.nimbus.nimbusWebServer.services.PedidoService;
 import jakarta.validation.Valid;
@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,11 +22,11 @@ public class PagamentoController {
     private PedidoService pedidoService;
 
     @PostMapping("/finalizar_compra")
-    public ResponseEntity<?> finalizarPagamento(@Valid @RequestBody CheckoutRequestDto checkoutMpDto) {
+    public ResponseEntity<?> finalizarPagamento(@Valid @RequestBody CheckoutRequestDto checkoutMpDto, @RequestHeader("X-Idempotency-Key") String idempotencyKey) {
         try {
-            ResponsePedidoDto responsePedidoDto = pedidoService.processarPagamento(checkoutMpDto);
+            PedidoResponseDto responsePedidoDto = pedidoService.processarPagamento(checkoutMpDto, idempotencyKey);
 
-            return ResponseEntity.ok("Pedido processado" + responsePedidoDto);
+            return ResponseEntity.ok(responsePedidoDto);
         } catch (MPException e) {
             log.error("Erro no Mercado Pago: ", e);
             return ResponseEntity

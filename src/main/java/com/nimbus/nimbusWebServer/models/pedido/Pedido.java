@@ -1,7 +1,6 @@
 package com.nimbus.nimbusWebServer.models.pedido;
 
-import com.mercadopago.resources.order.Order;
-import com.mercadopago.resources.payment.PaymentStatus;
+import com.mercadopago.resources.order.OrderPaymentMethod;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ItemPedidoDto;
 import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
@@ -37,6 +36,9 @@ public class Pedido {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuario;
+
+    @Column(unique = true)
+    private String idempotencyKey;
 
     private String servicoPagamento;
 
@@ -75,15 +77,43 @@ public class Pedido {
     private Instant pagoEm;
     private Instant expiraEm;
 
-    private static StatusPedido traduzStatusMP(String statusMercadoPago) {
+    // Dados de pagamento (pix/boleto/3DS) devolvidos pelo Mercado Pago, persistidos
+    // para que uma resposta idempotente (mesma X-Idempotency-Key) consiga devolvê-los de novo.
+    @Column(columnDefinition = "TEXT")
+    private String qrCode;
+
+    @Column(columnDefinition = "TEXT")
+    private String qrCodeBase64;
+
+    private String digitableLine;
+
+    @Column(columnDefinition = "TEXT")
+    private String ticketUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String redirectUrl;
+
+    public void preencherDadosPagamento(OrderPaymentMethod metodoPagamento) {
+        this.qrCode = metodoPagamento.getQrCode();
+        this.qrCodeBase64 = metodoPagamento.getQrCodeBase64();
+        this.digitableLine = metodoPagamento.getDigitableLine();
+        this.ticketUrl = metodoPagamento.getTicketUrl();
+        this.redirectUrl = metodoPagamento.getRedirectUrl();
+    }
+
+    // Vocabulário da Orders API (checkout-api-orders), não da Payments API legada:
+    // https://www.mercadopago.com.ar/developers/en/docs/checkout-api-orders/payment-management/status/transaction-status
+    public static StatusPedido traduzStatusMP(String statusMercadoPago, String statusDetailMercadoPago) {
         return switch (statusMercadoPago) {
-            case PaymentStatus.APPROVED -> StatusPedido.APROVADO;
-            case PaymentStatus.AUTHORIZED -> StatusPedido.AGUARDANDO_PAGAMENTO;
-            case PaymentStatus.IN_PROCESS, PaymentStatus.PENDING -> StatusPedido.AGUARDANDO_PAGAMENTO;
-            case PaymentStatus.REJECTED -> StatusPedido.RECUSADO;
-            case PaymentStatus.CANCELLED -> StatusPedido.CANCELADO;
-            case PaymentStatus.REFUNDED, PaymentStatus.CHARGED_BACK -> StatusPedido.CANCELADO;
-            case PaymentStatus.IN_MEDIATION -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            case "processed" -> StatusPedido.APROVADO;
+            case "created", "processing", "in_review" -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            case "action_required" -> switch (statusDetailMercadoPago) {
+                case "waiting_capture" -> StatusPedido.AUTORIZADO;
+                default -> StatusPedido.AGUARDANDO_PAGAMENTO;
+            };
+            case "failed" -> StatusPedido.RECUSADO;
+            case "canceled", "refunded", "charged_back" -> StatusPedido.CANCELADO;
+            case "expired" -> StatusPedido.EXPIRADO;
             default -> throw new IllegalStateException(
                     "Não foi encontrada tradução para o status Mercado Pago recebido: [%s]".formatted(statusMercadoPago)
             );

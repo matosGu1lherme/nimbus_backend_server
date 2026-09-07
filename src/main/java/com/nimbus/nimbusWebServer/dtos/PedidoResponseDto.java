@@ -15,8 +15,10 @@ public record PedidoResponseDto(
     Long numeroPedido,
     Instant dataCriacao,
     StatusPedido status,
+    String statusDetalhe,
     BigDecimal valorTotal,
-    List<ItemPedidoResponseDto> itens
+    List<ItemPedidoResponseDto> itens,
+    DadosPagamentoDto dadosPagamento
 ) {
     @Builder
     public record ItemPedidoResponseDto(
@@ -27,5 +29,14 @@ public record PedidoResponseDto(
 
             @JsonProperty("url_imagem")
             String urlimagem
-    ) {};
+    ) {}
+
+    @Builder
+    public record DadosPagamentoDto(
+            String qrCode,
+            String qrCodeBase64,
+            String digitableLine,
+            String ticketUrl,
+            String redirectUrl
+    ) {}
 }

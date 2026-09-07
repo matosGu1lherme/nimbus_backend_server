@@ -55,7 +55,8 @@ public class SecurityConfig {
             "/carrinho/adicionar_ao_carrinho",
             "/carrinho/buscar_itens_carrinho",
             "/pagamento/finalizar_compra",
-            "/pedido/buscar_pedidos_usuario/**"
+            "/pedido/buscar_pedidos_usuario/**",
+            "/pedido/buscar_pedido/**"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
@@ -66,7 +67,8 @@ public class SecurityConfig {
             "/carrinho/adicionar_ao_carrinho",
             "/carrinho/buscar_itens_carrinho",
             "/pagamento/finalizar_compra",
-            "/pedido/buscar_pedidos_usuario/**"
+            "/pedido/buscar_pedidos_usuario/**",
+            "/pedido/buscar_pedido/**"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador
@@ -98,7 +100,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Idempotency-Key"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

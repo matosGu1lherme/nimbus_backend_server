@@ -22,7 +22,7 @@ public class MercadoPagoService {
     @Autowired
     private MercadoPagoProperties mpConfig;
 
-    public Order finalizarCompraMp(CheckoutRequestDto checkoutMpDto) throws MPException, MPApiException {
+    public Order finalizarCompraMp(CheckoutRequestDto checkoutMpDto, String idempotencyKey) throws MPException, MPApiException {
         MercadoPagoConfig.setAccessToken(mpConfig.accessToken());
 
         // Monta o método de pagamento
@@ -53,7 +53,7 @@ public class MercadoPagoService {
                 .build();
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("X-Idempotency-Key", UUID.randomUUID().toString());
+        headers.put("X-Idempotency-Key", idempotencyKey);
         var requestOptions = MPRequestOptions.builder()
                 .customHeaders(headers)
                 .build();

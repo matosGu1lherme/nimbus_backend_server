@@ -88,4 +88,12 @@ public class CarrinhoService {
         carrinhoRepository.save(carrinho);
         return carrinho;
     }
+
+    @Transactional
+    public void limparCarrinho(UUID carrinhoId) {
+        Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
+                .orElseThrow(() -> new RuntimeException("Não foi possivel limpar o carrinho, carrinho não encontrado!"));
+
+        carrinho.getCarrinhoItems().clear();
+    }
 }

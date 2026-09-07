@@ -3,18 +3,19 @@ package com.nimbus.nimbusWebServer.services;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.order.Order;
+import com.mercadopago.resources.order.OrderPayment;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
 import com.nimbus.nimbusWebServer.dtos.PedidoResponseDto;
-import com.nimbus.nimbusWebServer.dtos.ResponsePedidoDto;
+import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.models.pedido.Pedido;
 import com.nimbus.nimbusWebServer.repositories.PedidoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -26,42 +27,52 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
-    public ResponsePedidoDto processarPagamento(CheckoutRequestDto checkoutRequestDto) throws MPException, MPApiException {
-        Pedido pedido = criarPedido(checkoutRequestDto);
+    @Autowired
+    private CarrinhoService carrinhoService;
 
-        Order order = mercadoPagoService.finalizarCompraMp(checkoutRequestDto);
+    public PedidoResponseDto processarPagamento(CheckoutRequestDto checkoutRequestDto, String idempotencyKey) throws MPException, MPApiException {
+        Optional<Pedido> pedidoExistente = pedidoRepository.findByIdempotencyKey(idempotencyKey);
 
-        return new ResponsePedidoDto(pedido.getNumeroPedido(), pedido.getStatusPedido(), pedido.getStatusDetalhe());
+        if(pedidoExistente.isPresent()) {
+            return montarResponse(pedidoExistente.get());
+        }
+
+        Pedido pedido;
+        try {
+            pedido = criarPedido(checkoutRequestDto, idempotencyKey);
+        }catch (DataIntegrityViolationException e) {
+            return pedidoRepository.findByIdempotencyKey(idempotencyKey)
+                    .map(this::montarResponse)
+                    .orElseThrow(() -> e);
+        }
+
+        //Enviando pagamento para o mercado pago
+        Order order = mercadoPagoService.finalizarCompraMp(checkoutRequestDto, idempotencyKey);
+
+        //Atualizando o pedido de acordo com o oder
+        OrderPayment ultimoPagamento = order.getTransactions().getPayments().getLast();
+        pedido.setStatusPedido(Pedido.traduzStatusMP(ultimoPagamento.getStatus(), ultimoPagamento.getStatusDetail()));
+        pedido.setStatusDetalhe(ultimoPagamento.getStatusDetail());
+        pedido.setOrderId(order.getId());
+        pedido.preencherDadosPagamento(ultimoPagamento.getPaymentMethod());
+        pedidoRepository.save(pedido);
+
+        if(pedido.getStatusPedido().equals(StatusPedido.APROVADO)) carrinhoService.limparCarrinho(UUID.fromString(checkoutRequestDto.usuarioId()));
+
+        return montarResponse(pedido);
     }
 
     public List<PedidoResponseDto> buscarPedidosUsuario(UUID usuarioId) {
-        List<Pedido> pedidosUser = pedidoRepository.findByUsuarioId(usuarioId);
+        return pedidoRepository.findByUsuarioId(usuarioId).stream()
+                .map(this::montarResponse)
+                .toList();
+    }
 
-        if(pedidosUser.isEmpty()) {
-            return new ArrayList<>();
-        }
+    public PedidoResponseDto buscarPedidoPorId(UUID idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o pedido solicitado."));
 
-        List<PedidoResponseDto> pedidoList = new ArrayList<>();
-        for(Pedido pedido : pedidosUser) {
-            PedidoResponseDto pedidoResponseDto = PedidoResponseDto.builder()
-                    .id(pedido.getId())
-                    .numeroPedido(pedido.getNumeroPedido())
-                    .dataCriacao(pedido.getCriadoEm())
-                    .status(pedido.getStatusPedido())
-                    .valorTotal(retornaPrecoTotalPedido(pedido))
-                    .itens(pedido.getItens().stream().map(item -> PedidoResponseDto.ItemPedidoResponseDto.builder()
-                            .produtoId(item.getProduto().getId())
-                            .nome(item.getProduto().getNome())
-                            .quantidade(item.getQuantidade())
-                            .precoNoMomento(item.getPrecoUnitario())
-                            .build())
-                            .toList())
-                    .build();
-
-            pedidoList.add(pedidoResponseDto);
-        }
-
-        return pedidoList;
+        return montarResponse(pedido);
     }
 
     public BigDecimal retornaPrecoTotalPedido(Pedido pedido) {
@@ -71,9 +82,40 @@ public class PedidoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Transactional
-    protected Pedido criarPedido(CheckoutRequestDto dto) {
+    protected Pedido criarPedido(CheckoutRequestDto dto, String idempotencyKey) {
         Pedido pedido = Pedido.gerarPedido(dto);
+        pedido.setIdempotencyKey(idempotencyKey);
         return pedidoRepository.save(pedido);
+    }
+
+    private PedidoResponseDto montarResponse(Pedido pedido) {
+        PedidoResponseDto.DadosPagamentoDto dadosPagamento = PedidoResponseDto.DadosPagamentoDto.builder()
+                .qrCode(pedido.getQrCode())
+                .qrCodeBase64(pedido.getQrCodeBase64())
+                .digitableLine(pedido.getDigitableLine())
+                .ticketUrl(pedido.getTicketUrl())
+                .redirectUrl(pedido.getRedirectUrl())
+                .build();
+
+        List<PedidoResponseDto.ItemPedidoResponseDto> itens = pedido.getItens().stream()
+                .map(item -> PedidoResponseDto.ItemPedidoResponseDto.builder()
+                        .produtoId(item.getProduto().getId())
+                        .nome(item.getProduto().getNome())
+                        .quantidade(item.getQuantidade())
+                        .precoNoMomento(item.getPrecoUnitario())
+                        .urlimagem(item.getProduto().getImagens().isEmpty() ? null : item.getProduto().getImagens().getFirst().getUrl())
+                        .build())
+                .toList();
+
+        return PedidoResponseDto.builder()
+                .id(pedido.getId())
+                .numeroPedido(pedido.getNumeroPedido())
+                .dataCriacao(pedido.getCriadoEm())
+                .status(pedido.getStatusPedido())
+                .statusDetalhe(pedido.getStatusDetalhe())
+                .valorTotal(retornaPrecoTotalPedido(pedido))
+                .itens(itens)
+                .dadosPagamento(dadosPagamento)
+                .build();
     }
 }

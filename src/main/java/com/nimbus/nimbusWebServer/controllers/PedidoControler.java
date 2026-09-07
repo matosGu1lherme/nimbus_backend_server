@@ -24,4 +24,10 @@ public class PedidoControler {
         List<PedidoResponseDto> pedidoResponseDtoList = pedidoService.buscarPedidosUsuario(UUID.fromString(idUsario));
         return ResponseEntity.ok(pedidoResponseDtoList);
     }
+
+    @GetMapping("/buscar_pedido/{idPedido}")
+    public ResponseEntity<?> buscarPedidoPorId(@PathVariable String idPedido) {
+        PedidoResponseDto pedidoResponseDto = pedidoService.buscarPedidoPorId(UUID.fromString(idPedido));
+        return ResponseEntity.ok(pedidoResponseDto);
+    }
 }
