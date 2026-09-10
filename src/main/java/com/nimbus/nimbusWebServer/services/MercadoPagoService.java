@@ -8,6 +8,7 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.order.Order;
 import com.nimbus.nimbusWebServer.config.properties.MercadoPagoProperties;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
+import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,7 @@ public class MercadoPagoService {
         MercadoPagoConfig.setAccessToken(mpConfig.accessToken());
 
         // Monta o método de pagamento
-        var paymentMethod = OrderPaymentMethodRequest.builder()
-                .type(checkoutMpDto.paymentMethod())
-                .id(checkoutMpDto.paymentMethodId())
-                .token(checkoutMpDto.token())
-                .installments(checkoutMpDto.installments())
-                .build();
+        var paymentMethod = montarPaymentMethod(checkoutMpDto);
 
         var payment = OrderPaymentRequest.builder()
                 .amount(checkoutMpDto.amount().toPlainString())
@@ -60,5 +56,20 @@ public class MercadoPagoService {
 
         var client = new OrderClient();
         return client.create(orderRequest, requestOptions);
+    }
+
+    private OrderPaymentMethodRequest montarPaymentMethod(CheckoutRequestDto dto) {
+        MetodoPagamento metodoPagamento = MetodoPagamento.tranformaMetodoPagamento(dto.paymentMethod());
+
+        var builder = OrderPaymentMethodRequest.builder()
+                .type(metodoPagamento.getMpType())
+                .id(metodoPagamento.getMpId() != null ? metodoPagamento.getMpId() : dto.paymentMethodId());
+
+        if (metodoPagamento == MetodoPagamento.CREDIT_CARD) {
+            builder.token(dto.token())
+                    .installments(dto.installments());
+        }
+
+        return builder.build();
     }
 }

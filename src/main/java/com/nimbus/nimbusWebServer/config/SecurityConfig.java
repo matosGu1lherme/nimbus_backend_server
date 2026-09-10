@@ -43,7 +43,8 @@ public class SecurityConfig {
             "/produto/public/buscar_imagem_apresentacao_produto",
             "/produto/public/obter_produto_por_slug",
             "/produto/public/buscar_imagens_produto",
-            "/carrinho/buscar_itens_carrinho/**"
+            "/carrinho/buscar_itens_carrinho/**",
+            "/pagamento/webhook"
     };
 
     // Endpoints que requerem autenticação para serem acessados

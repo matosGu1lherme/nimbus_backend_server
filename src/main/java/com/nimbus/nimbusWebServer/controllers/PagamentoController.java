@@ -44,4 +44,9 @@ public class PagamentoController {
                     .body("Erro inesperado ao finalizarPagamento");
         }
     }
+
+    @PostMapping("/webhook")
+    public void pagamentoWebhookController() {
+        System.out.println("********* WEBHOOKS funcionando *********");
+    }
 }

@@ -13,4 +13,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
     List<Pedido> findByUsuarioId(UUID usuarioId);
 
     Optional<Pedido> findByIdempotencyKey(String idempotencyKey);
+
+    Optional<Pedido> findByOrderId(String orderId);
 }
