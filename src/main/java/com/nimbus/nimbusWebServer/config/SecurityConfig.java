@@ -53,6 +53,8 @@ public class SecurityConfig {
             "/tipo/salvar_tipo",
             "/produto/salvar_produto",
             "/users/me",
+            "/users/address",
+            "/users/address/**",
             "/carrinho/adicionar_ao_carrinho",
             "/carrinho/buscar_itens_carrinho",
             "/pagamento/finalizar_compra",
@@ -100,7 +102,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Idempotency-Key"));
         corsConfiguration.setAllowCredentials(true);
 

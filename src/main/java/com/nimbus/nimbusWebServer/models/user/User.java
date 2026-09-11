@@ -31,6 +31,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<RefreshToken> refreshToken = new ArrayList<>();
 
     private String cpf;
@@ -45,5 +46,6 @@ public class User {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<UserAddress> enderecos = new ArrayList<>();
 }

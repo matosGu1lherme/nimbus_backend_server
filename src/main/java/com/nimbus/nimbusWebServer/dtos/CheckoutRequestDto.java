@@ -24,6 +24,8 @@ public record CheckoutRequestDto(
         @Valid
         Payer payer,
 
+        Long idEnderecoEnvio,
+
         String token,
         Integer installments,
         String paymentMethodId,     // bandeira (master, visa, etc.)

@@ -21,7 +21,7 @@ public class UserAddress {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String lagradouro;
+    private String logradouro;
 
     private Integer numero;
 
@@ -32,5 +32,7 @@ public class UserAddress {
     private String cep;
 
     private String pais;
+
+    private boolean principal;
 
 }
