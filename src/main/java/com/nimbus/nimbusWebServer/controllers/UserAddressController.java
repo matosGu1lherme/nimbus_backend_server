@@ -2,7 +2,6 @@ package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.UserAddressDto;
 import com.nimbus.nimbusWebServer.dtos.UserAddressResponseDto;
-import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import com.nimbus.nimbusWebServer.services.UserAddressService;
@@ -25,23 +24,20 @@ public class UserAddressController {
     @Autowired
     private AccessTokenService accessTokenService;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @PostMapping
     public ResponseEntity<UserAddressResponseDto> criarEndereco(
             @CookieValue("accessToken") String accessToken,
             @Valid @RequestBody UserAddressDto dto
     ) {
-        UUID userId = obterUserId(accessToken);
+        UUID userId = accessTokenService.obterUserId(accessToken);
         return new ResponseEntity<>(userAddressService.criarEndereco(userId, dto), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/buscar_enderecos_ativos_usuario")
     public ResponseEntity<List<UserAddressResponseDto>> listarEnderecos(
             @CookieValue("accessToken") String accessToken
     ) {
-        UUID userId = obterUserId(accessToken);
+        UUID userId = accessTokenService.obterUserId(accessToken);
         return ResponseEntity.ok(userAddressService.listarEnderecos(userId));
     }
 
@@ -51,7 +47,7 @@ public class UserAddressController {
             @PathVariable Long enderecoId,
             @Valid @RequestBody UserAddressDto dto
     ) {
-        UUID userId = obterUserId(accessToken);
+        UUID userId = accessTokenService.obterUserId(accessToken);
         return ResponseEntity.ok(userAddressService.atualizarEndereco(userId, enderecoId, dto));
     }
 
@@ -60,7 +56,7 @@ public class UserAddressController {
             @CookieValue("accessToken") String accessToken,
             @PathVariable Long enderecoId
     ) {
-        UUID userId = obterUserId(accessToken);
+        UUID userId = accessTokenService.obterUserId(accessToken);
         return ResponseEntity.ok(userAddressService.definirEnderecoPrincipal(userId, enderecoId));
     }
 
@@ -69,15 +65,8 @@ public class UserAddressController {
             @CookieValue("accessToken") String accessToken,
             @PathVariable Long enderecoId
     ) {
-        UUID userId = obterUserId(accessToken);
+        UUID userId = accessTokenService.obterUserId(accessToken);
         userAddressService.deletarEndereco(userId, enderecoId);
         return ResponseEntity.noContent().build();
-    }
-
-    private UUID obterUserId(String accessToken) {
-        String email = accessTokenService.getSubjectFromToken(accessToken);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-        return user.getId();
     }
 }

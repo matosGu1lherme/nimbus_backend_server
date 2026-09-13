@@ -3,6 +3,8 @@ package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.*;
 import com.nimbus.nimbusWebServer.models.user.User;
+import com.nimbus.nimbusWebServer.models.user.UserAddress;
+import com.nimbus.nimbusWebServer.repositories.UserAddressRepository;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import com.nimbus.nimbusWebServer.services.RefreshTokenService;
@@ -19,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -35,6 +39,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserAddressRepository userAddressRepository;
 
     @Value("${cookie.params-secure}")
     private Boolean cookieSecure;
@@ -135,5 +142,4 @@ public class UserController {
                 "id", user.getId()
         ));
     }
-
 }

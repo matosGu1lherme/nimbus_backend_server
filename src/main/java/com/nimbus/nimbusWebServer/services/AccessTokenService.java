@@ -6,10 +6,13 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.nimbus.nimbusWebServer.implementation.UserDetailsImpl;
 import com.nimbus.nimbusWebServer.models.user.User;
+import com.nimbus.nimbusWebServer.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.UUID;
 
 @Service
 public class AccessTokenService {
@@ -18,6 +21,9 @@ public class AccessTokenService {
     private String SECRET_KEY;
 
     private static final String ISSUER = "nimbus-api";
+
+    @Autowired
+    private UserRepository userRepository;
 
     public String generateToken(String email) {
         try {
@@ -45,6 +51,13 @@ public class AccessTokenService {
         } catch (JWTVerificationException exception){
             throw new JWTVerificationException("Token inválido ou expirado.");
         }
+    }
+
+    public UUID obterUserId(String accessToken) {
+        String email = this.getSubjectFromToken(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        return user.getId();
     }
 
     private Instant creationDate() {

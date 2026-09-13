@@ -14,4 +14,6 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, Long> 
     List<UserAddress> findByUserId(UUID userId);
 
     Optional<UserAddress> findByIdAndUserId(Long id, UUID userId);
+
+    List<UserAddress> findByInCanceladoFalseAndUserId(UUID userId);
 }

@@ -32,6 +32,9 @@ public class PedidoItem {
     private Produto produto;
 
     @Column(nullable = false)
+    private String grade;
+
+    @Column(nullable = false)
     private Integer quantidade;
 
     @Column(name = "preco_unitario", precision = 10, scale = 2, nullable = false)
@@ -45,6 +48,7 @@ public class PedidoItem {
 
         pedidoItem.setPedido(pedido);
         pedidoItem.setProduto(produtoItem);
+        pedidoItem.setGrade(dto.grade());
         pedidoItem.setQuantidade(dto.quantidade());
         pedidoItem.setPrecoUnitario(dto.precoNoMomento());
 

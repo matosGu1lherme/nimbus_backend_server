@@ -7,6 +7,7 @@ import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.enums.TipoDocumentoComprador;
 import com.nimbus.nimbusWebServer.models.user.User;
+import com.nimbus.nimbusWebServer.models.user.UserAddress;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -92,6 +93,10 @@ public class Pedido {
 
     @Column(columnDefinition = "TEXT")
     private String redirectUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "endereco_entrega_id")
+    private UserAddress ederecoEntrega;
 
     public void preencherDadosPagamento(OrderPaymentMethod metodoPagamento) {
         this.qrCode = metodoPagamento.getQrCode();

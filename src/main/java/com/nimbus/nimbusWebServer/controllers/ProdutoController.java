@@ -1,8 +1,10 @@
 package com.nimbus.nimbusWebServer.controllers;
 
+import com.nimbus.nimbusWebServer.dtos.AtualizarEstoqueRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ProdutoRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ProdutoResponseDto;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
+import com.nimbus.nimbusWebServer.services.EstoqueService;
 import com.nimbus.nimbusWebServer.services.ProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,19 @@ import java.util.List;
 public class ProdutoController {
 
     private final ProdutoService produtoService;
+    private final EstoqueService estoqueService;
 
-    public  ProdutoController (ProdutoService produtoService) {
+    public  ProdutoController (ProdutoService produtoService, EstoqueService estoqueService) {
         this.produtoService = produtoService;
+        this.estoqueService = estoqueService;
+    }
+
+    @PostMapping("/atualizar_estoque")
+    public ResponseEntity<String> atualizarEstoque(@RequestBody AtualizarEstoqueRequestDto dto) {
+        estoqueService.atualizarEstoque(dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Estoque atualizado com sucesso!");
     }
 
     @PostMapping("/salvar_produto")
@@ -37,7 +49,15 @@ public class ProdutoController {
                 .status(HttpStatus.OK)
                 .body(produtos);
     }
-    
+
+    @GetMapping("/public/buscar_produtos_por_nome_categoria")
+    public ResponseEntity<List<ProdutoResponseDto>> buscarProdutosPorNomeCategoria(@RequestParam String categoriaNome) {
+        List<ProdutoResponseDto> produtos = produtoService.buscarProdutosPorNomeCategoria(categoriaNome);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(produtos);
+    }
+
     @GetMapping("/public/buscar_imagem_apresentacao_produto")
     public String buscarImagemApresentacaoProduto(@RequestParam Long produtoId) {
         return produtoService.retornarImgApresentacaoProd(produtoId);

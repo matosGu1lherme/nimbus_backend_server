@@ -14,5 +14,18 @@ public record ProdutoResponseDto(
         Long tipo_id,
         Long categoria_id,
         String sku,
-        List<String> grade
-) { }
+        String img_url,
+        List<String> grade,
+        String categoriaNome,
+        String marca,
+        BigDecimal precoAntigo,
+        Double avaliacaoMedia,
+        Integer quantidadeAvaliacoes,
+        Integer quantidadeEstoque,
+        List<EstoqueGradeDto> estoquePorGrade,
+        Integer quantidadeMaximaParcelasSemJuros,
+        Integer prazoEntregaDiasUteis
+) {
+    @Builder
+    public record EstoqueGradeDto(String grade, Integer quantidade) { }
+}

@@ -32,4 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
+### Segredos / config local ###
 src/main/resources/application-local.properties
+.env
+.env.*
+
+### Uploads locais (LocalStorageService) ###
+uploads/

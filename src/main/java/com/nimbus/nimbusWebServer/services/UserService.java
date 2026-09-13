@@ -9,12 +9,14 @@ import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.config.SecurityConfig;
 import com.nimbus.nimbusWebServer.security.roles.Role;
 import com.nimbus.nimbusWebServer.security.roles.RoleName;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -23,7 +25,6 @@ public class UserService {
     private UserRepository userRepository;
     private SecurityConfig securityConfig;
     private RefreshTokenService refreshTokenService;
-
 
     public UserService(
             AuthenticationManager authenticationManager,

@@ -48,7 +48,7 @@ public class UserAddressService {
     }
 
     public List<UserAddressResponseDto> listarEnderecos(UUID userId) {
-        return userAddressRepository.findByUserId(userId).stream()
+        return userAddressRepository.findByInCanceladoFalseAndUserId(userId).stream()
                 .map(this::montarResponse)
                 .toList();
     }
@@ -66,7 +66,7 @@ public class UserAddressService {
         UserAddress endereco = userAddressRepository.findByIdAndUserId(enderecoId, userId)
                 .orElseThrow(() -> new RuntimeException("Endereço não encontrado para este usuário."));
 
-        boolean eraPrincipal = endereco.isPrincipal();
+        boolean eraPrincipal = endereco.getPrincipal();
         userAddressRepository.delete(endereco);
 
         if (eraPrincipal) {
@@ -97,7 +97,7 @@ public class UserAddressService {
                 endereco.getCidade(),
                 endereco.getCep(),
                 endereco.getPais(),
-                endereco.isPrincipal()
+                endereco.getPrincipal()
         );
     }
 }

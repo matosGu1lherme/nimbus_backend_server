@@ -6,9 +6,12 @@ import com.mercadopago.resources.order.Order;
 import com.mercadopago.resources.order.OrderPayment;
 import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
 import com.nimbus.nimbusWebServer.dtos.PedidoResponseDto;
+import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
 import com.nimbus.nimbusWebServer.models.pedido.Pedido;
+import com.nimbus.nimbusWebServer.models.user.UserAddress;
 import com.nimbus.nimbusWebServer.repositories.PedidoRepository;
+import com.nimbus.nimbusWebServer.repositories.UserAddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,12 @@ public class PedidoService {
 
     @Autowired
     private CarrinhoService carrinhoService;
+
+    @Autowired
+    private UserAddressRepository userAddressRepository;
+
+    @Autowired
+    private EstoqueService estoqueService;
 
     public PedidoResponseDto processarPagamento(CheckoutRequestDto checkoutRequestDto, String idempotencyKey) throws MPException, MPApiException {
         Optional<Pedido> pedidoExistente = pedidoRepository.findByIdempotencyKey(idempotencyKey);
@@ -57,7 +66,11 @@ public class PedidoService {
         pedido.preencherDadosPagamento(ultimoPagamento.getPaymentMethod());
         pedidoRepository.save(pedido);
 
-        if(pedido.getStatusPedido().equals(StatusPedido.APROVADO)) carrinhoService.limparCarrinho(UUID.fromString(checkoutRequestDto.usuarioId()));
+        if(pedido.getStatusPedido() == StatusPedido.AGUARDANDO_PAGAMENTO
+                || pedido.getStatusPedido() == StatusPedido.APROVADO
+                || pedido.getStatusPedido() == StatusPedido.AUTORIZADO) {
+            carrinhoService.limparCarrinho(UUID.fromString(checkoutRequestDto.usuarioId()));
+        }
 
         return montarResponse(pedido);
     }
@@ -85,6 +98,10 @@ public class PedidoService {
     protected Pedido criarPedido(CheckoutRequestDto dto, String idempotencyKey) {
         Pedido pedido = Pedido.gerarPedido(dto);
         pedido.setIdempotencyKey(idempotencyKey);
+
+        UserAddress enderecoEntrega = userAddressRepository.getReferenceById(dto.idEnderecoEnvio());
+        pedido.setEderecoEntrega(enderecoEntrega);
+
         return pedidoRepository.save(pedido);
     }
 
