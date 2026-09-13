@@ -54,6 +54,8 @@ public class ProdutoService {
         novoProduto.setNome(produto.nome());
         novoProduto.setPreco(produto.preco());
         novoProduto.setDescricao(produto.descricao());
+        novoProduto.setMarca(produto.marca());
+        novoProduto.setPrecoAntigo(produto.precoAntigo());
         novoProduto.setTipo(tipoRepository.findById(produto.tipo_id())
                 .orElseThrow(() -> new NoSuchElementException("Tipo com ID " + produto.tipo_id() + " não encontrado.")));
         novoProduto.setCategoria(categoriaRepository.findById(produto.categoria_id())
@@ -98,6 +100,16 @@ public class ProdutoService {
     public List<ProdutoResponseDto> buscarProdutos() {
         List<Produto> produtos = produtoRepository.findAll();
         List<ProdutoResponseDto> produtosResponseDto = new ArrayList();
+        for (Produto produto : produtos) {
+            ProdutoResponseDto novoProdutoResponse = produtoMapper.toProdutoResponseDto(produto);
+            produtosResponseDto.add(novoProdutoResponse);
+        }
+        return produtosResponseDto;
+    }
+
+    public List<ProdutoResponseDto> buscarProdutosPorNomeCategoria(String categoriaNome) {
+        List<Produto> produtos = produtoRepository.findByCategoriaNome(categoriaNome);
+        List<ProdutoResponseDto> produtosResponseDto = new ArrayList<>();
         for (Produto produto : produtos) {
             ProdutoResponseDto novoProdutoResponse = produtoMapper.toProdutoResponseDto(produto);
             produtosResponseDto.add(novoProdutoResponse);

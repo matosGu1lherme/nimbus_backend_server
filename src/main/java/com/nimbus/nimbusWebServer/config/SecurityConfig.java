@@ -40,10 +40,12 @@ public class SecurityConfig {
             "/uploads/**",
             "/users/logout",
             "/produto/public/buscar_produtos",
+            "/produto/public/buscar_produtos_por_nome_categoria",
             "/produto/public/buscar_imagem_apresentacao_produto",
             "/produto/public/obter_produto_por_slug",
             "/produto/public/buscar_imagens_produto",
-            "/carrinho/buscar_itens_carrinho/**"
+            "/carrinho/buscar_itens_carrinho/**",
+            "/pagamento/webhook"
     };
 
     // Endpoints que requerem autenticação para serem acessados
@@ -52,8 +54,14 @@ public class SecurityConfig {
             "/tipo/salvar_tipo",
             "/produto/salvar_produto",
             "/users/me",
+            "/users/address",
+            "/users/address/**",
             "/carrinho/adicionar_ao_carrinho",
-            "/carrinho/buscar_itens_carrinho"
+            "/carrinho/buscar_itens_carrinho",
+            "/pagamento/finalizar_compra",
+            "/pedido/buscar_pedidos_usuario/**",
+            "/pedido/buscar_pedido/**",
+            "/produto/atualizar_estoque"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de cliente
@@ -62,14 +70,18 @@ public class SecurityConfig {
             "/tipo/public/listar_tipos",
             "/produto/public/buscar_produtos",
             "/carrinho/adicionar_ao_carrinho",
-            "/carrinho/buscar_itens_carrinho"
+            "/carrinho/buscar_itens_carrinho",
+            "/pagamento/finalizar_compra",
+            "/pedido/buscar_pedidos_usuario/**",
+            "/pedido/buscar_pedido/**"
     };
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador
     public static final String [] ENDPOINTS_ADMIN = {
             "/categoria/salvar_categoria",
             "/tipo/salvar_tipo",
-            "/produto/salvar_produto"
+            "/produto/salvar_produto",
+            "/produto/atualizar_estoque"
     };
 
     @Bean
@@ -93,8 +105,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Idempotency-Key"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

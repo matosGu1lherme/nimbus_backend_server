@@ -3,11 +3,14 @@ package com.nimbus.nimbusWebServer.controllers;
 
 import com.nimbus.nimbusWebServer.dtos.*;
 import com.nimbus.nimbusWebServer.models.user.User;
+import com.nimbus.nimbusWebServer.models.user.UserAddress;
+import com.nimbus.nimbusWebServer.repositories.UserAddressRepository;
 import com.nimbus.nimbusWebServer.repositories.UserRepository;
 import com.nimbus.nimbusWebServer.services.AccessTokenService;
 import com.nimbus.nimbusWebServer.services.RefreshTokenService;
 import com.nimbus.nimbusWebServer.services.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -35,6 +40,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserAddressRepository userAddressRepository;
+
     @Value("${cookie.params-secure}")
     private Boolean cookieSecure;
 
@@ -45,13 +53,13 @@ public class UserController {
     private String cookieDomain;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createUser(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/register_store_user")
-    public ResponseEntity<Void> createStoreUser(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<Void> createStoreUser(@Valid @RequestBody CreateUserDto createUserDto) {
         userService.createStoreUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -134,5 +142,4 @@ public class UserController {
                 "id", user.getId()
         ));
     }
-
 }

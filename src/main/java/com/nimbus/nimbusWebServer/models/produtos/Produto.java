@@ -42,6 +42,17 @@ public class Produto implements Serializable {
     @Column(unique = true, nullable = false)
     private String sku;
 
+    private String marca;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoAntigo;
+
+    @Column(nullable = false)
+    private Double avaliacaoMedia = 0.0;
+
+    @Column(nullable = false)
+    private Integer quantidadeAvaliacoes = 0;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ImagemProduto> imagens = new ArrayList<>();

@@ -3,4 +3,8 @@ package com.nimbus.nimbusWebServer.repositories;
 import com.nimbus.nimbusWebServer.models.produtos.Estoque;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface EstoqueRepository extends JpaRepository<Estoque, Long> { }
+import java.util.Optional;
+
+public interface EstoqueRepository extends JpaRepository<Estoque, Long> {
+    Optional<Estoque> findByProdutoId(Long produtoId);
+}

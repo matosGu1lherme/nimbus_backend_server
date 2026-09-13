@@ -12,6 +12,8 @@ public record ProdutoRequestDto(
         Long tipo_id,
         Long categoria_id,
         String sku,
+        String marca,
+        BigDecimal precoAntigo,
         List<String> numeracoesGrade
 ) {
 }
