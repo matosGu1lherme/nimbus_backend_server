@@ -125,7 +125,7 @@ public class Pedido {
         };
     }
 
-    public static Pedido gerarPedido(CheckoutRequestDto dto) {
+    public static Pedido gerarPedido(CheckoutRequestDto dto, List<CarrinhoItem> itensPedidoCarrinho) {
         Pedido novoPedido = new Pedido();
 
         novoPedido.setServicoPagamento(dto.paymentMethod());
@@ -146,10 +146,9 @@ public class Pedido {
         novoPedido.setCompradorNumeroDocumento(dto.payer().identification().number());
 
         List<PedidoItem> itensPedido = new ArrayList<>();
-        List<ItemPedidoDto> pedidosDto = dto.itensOrdemPedido();
 
-        for (ItemPedidoDto pedidoDto : pedidosDto) {
-            PedidoItem novoItemPedido = PedidoItem.criarItemDto(pedidoDto, novoPedido);
+        for (CarrinhoItem itemCarrinho : itensPedidoCarrinho) {
+            PedidoItem novoItemPedido = PedidoItem.criarItemDto(itemCarrinho, novoPedido);
             itensPedido.add(novoItemPedido);
         }
 

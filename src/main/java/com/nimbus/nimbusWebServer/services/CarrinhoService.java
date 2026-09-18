@@ -4,7 +4,9 @@ import com.nimbus.nimbusWebServer.dtos.ItemCarrinhoRequestDto;
 import com.nimbus.nimbusWebServer.dtos.ItemCarrinhoResponseDto;
 import com.nimbus.nimbusWebServer.models.pedido.Carrinho;
 import com.nimbus.nimbusWebServer.models.pedido.CarrinhoItem;
+import com.nimbus.nimbusWebServer.models.produtos.Grade;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
+import com.nimbus.nimbusWebServer.models.produtos.id.GradeId;
 import com.nimbus.nimbusWebServer.models.user.User;
 import com.nimbus.nimbusWebServer.repositories.CarrinhoItemRepository;
 import com.nimbus.nimbusWebServer.repositories.CarrinhoRepository;
@@ -51,7 +53,12 @@ public class CarrinhoService {
                     CarrinhoItem novoItem= new CarrinhoItem();
                     novoItem.setCarrinho(carrinho);
                     novoItem.setProduto(produto);
-                    novoItem.setTamanho(itemCarrinhoRequestDto.tamanho());
+
+                    Grade grade = new Grade();
+                    GradeId gradeId = new GradeId(produto.getId(), itemCarrinhoRequestDto.tamanho());
+                    grade.setId(gradeId);
+
+                    novoItem.setGrade(grade);
                     novoItem.setValorMomentoCompra(itemCarrinhoRequestDto.valorMomentoCompra());
 
                     carrinho.getCarrinhoItems().add(novoItem);
@@ -79,6 +86,12 @@ public class CarrinhoService {
         }
 
         return itemCarrinhoResponseDtoList;
+    }
+
+    public List<CarrinhoItem> buscarCarrinhoItensEntidadePorId(UUID userId) {
+        return carrinhoRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Não foram encontrados itens do carrinho"))
+                .getCarrinhoItems();
     }
 
     public Carrinho criarCarrinhoUsuario(User user) {

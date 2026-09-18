@@ -77,8 +77,8 @@ public class EstoqueService {
     }
 
     @Transactional
-    public void baixarEstoque(Long produtoId, String grade, Integer quantidadeVendida) {
-        GradeId gradeId = new GradeId(produtoId, grade);
+    public void baixarEstoque(Long produtoId, Grade grade, Integer quantidadeVendida) {
+        GradeId gradeId = new GradeId(produtoId, grade.getId().getNumeracao());
 
         EstoqueGrade estoqueGrade = estoqueGradeRepository.findById(gradeId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(

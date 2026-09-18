@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -52,6 +53,10 @@ public class UserController {
     @Value("${cookie.cookie-domain:}")
     private String cookieDomain;
 
+    private String resolvedCookieDomain() {
+        return StringUtils.hasText(cookieDomain) ? cookieDomain : null;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
         userService.createUser(createUserDto);
@@ -72,7 +77,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
-                .domain(cookieDomain)
+                .domain(resolvedCookieDomain())
                 .path("/")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
@@ -90,7 +95,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
-                .domain(cookieDomain)
+                .domain(resolvedCookieDomain())
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -99,7 +104,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
-                .domain(cookieDomain)
+                .domain(resolvedCookieDomain())
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -118,7 +123,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSameSite)
-                .domain(cookieDomain)
+                .domain(resolvedCookieDomain())
                 .path("/")
                 .maxAge(3600)
                 .build();

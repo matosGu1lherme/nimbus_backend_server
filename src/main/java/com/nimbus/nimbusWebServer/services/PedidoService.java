@@ -8,7 +8,9 @@ import com.nimbus.nimbusWebServer.dtos.CheckoutRequestDto;
 import com.nimbus.nimbusWebServer.dtos.PedidoResponseDto;
 import com.nimbus.nimbusWebServer.enums.MetodoPagamento;
 import com.nimbus.nimbusWebServer.enums.StatusPedido;
+import com.nimbus.nimbusWebServer.models.pedido.CarrinhoItem;
 import com.nimbus.nimbusWebServer.models.pedido.Pedido;
+import com.nimbus.nimbusWebServer.models.pedido.PedidoItem;
 import com.nimbus.nimbusWebServer.models.user.UserAddress;
 import com.nimbus.nimbusWebServer.repositories.PedidoRepository;
 import com.nimbus.nimbusWebServer.repositories.UserAddressRepository;
@@ -96,7 +98,17 @@ public class PedidoService {
     }
 
     protected Pedido criarPedido(CheckoutRequestDto dto, String idempotencyKey) {
-        Pedido pedido = Pedido.gerarPedido(dto);
+        List<CarrinhoItem> itensPedido = carrinhoService.buscarCarrinhoItensEntidadePorId(UUID.fromString(dto.usuarioId()));
+
+        BigDecimal totalValorCarrinhoBD = itensPedido.stream()
+                .map(item -> item.getValorMomentoCompra().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if(!totalValorCarrinhoBD.equals(dto.amount())){
+            throw new RuntimeException("Valor presente no carrinho do usuario difere do montante total enviada para pagamento");
+        }
+
+        Pedido pedido = Pedido.gerarPedido(dto, itensPedido);
         pedido.setIdempotencyKey(idempotencyKey);
 
         UserAddress enderecoEntrega = userAddressRepository.getReferenceById(dto.idEnderecoEnvio());

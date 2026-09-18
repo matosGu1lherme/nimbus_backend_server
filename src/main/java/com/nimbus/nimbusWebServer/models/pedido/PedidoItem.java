@@ -1,6 +1,7 @@
 package com.nimbus.nimbusWebServer.models.pedido;
 
 import com.nimbus.nimbusWebServer.dtos.ItemPedidoDto;
+import com.nimbus.nimbusWebServer.models.produtos.Grade;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import com.nimbus.nimbusWebServer.repositories.ProdutoRepository;
 import jakarta.persistence.*;
@@ -32,7 +33,7 @@ public class PedidoItem {
     private Produto produto;
 
     @Column(nullable = false)
-    private String grade;
+    private Grade grade;
 
     @Column(nullable = false)
     private Integer quantidade;
@@ -40,17 +41,17 @@ public class PedidoItem {
     @Column(name = "preco_unitario", precision = 10, scale = 2, nullable = false)
     private BigDecimal precoUnitario;
 
-    public static PedidoItem criarItemDto(ItemPedidoDto dto, Pedido pedido) {
+    public static PedidoItem criarItemDto(CarrinhoItem itemCarrinho, Pedido pedido) {
         PedidoItem pedidoItem = new PedidoItem();
 
         Produto produtoItem = new Produto();
-        produtoItem.setId(dto.idProduto());
+        produtoItem.setId(itemCarrinho.getProduto().getId());
 
         pedidoItem.setPedido(pedido);
         pedidoItem.setProduto(produtoItem);
-        pedidoItem.setGrade(dto.grade());
-        pedidoItem.setQuantidade(dto.quantidade());
-        pedidoItem.setPrecoUnitario(dto.precoNoMomento());
+        pedidoItem.setGrade(itemCarrinho.getGrade());
+        pedidoItem.setQuantidade(itemCarrinho.getQuantidade());
+        pedidoItem.setPrecoUnitario(itemCarrinho.getValorMomentoCompra());
 
         return pedidoItem;
     }

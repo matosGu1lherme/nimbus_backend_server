@@ -1,6 +1,7 @@
 package com.nimbus.nimbusWebServer.models.pedido;
 
 import com.nimbus.nimbusWebServer.models.pedido.Id.CarrinhoItemId;
+import com.nimbus.nimbusWebServer.models.produtos.Grade;
 import com.nimbus.nimbusWebServer.models.produtos.Produto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class CarrinhoItem {
 
     private Integer quantidade;
 
-    private Integer tamanho;
+    private Grade grade;
 
     @Column(name = "valor_momento_compra", precision = 10, scale = 2, nullable = false)
     private BigDecimal valorMomentoCompra;
