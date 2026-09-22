@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
 @Entity
@@ -34,6 +33,7 @@ public class CarrinhoItem {
     private Produto produto;
 
     private Integer quantidade;
+
 
     private Grade grade;
 
