@@ -34,7 +34,11 @@ public class CarrinhoItem {
 
     private Integer quantidade;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "produto_id", referencedColumnName = "produto_id", insertable = false, updatable = false, nullable = false),
+            @JoinColumn(name = "numeracao", referencedColumnName = "numeracao", insertable = false, updatable = false, nullable = false)
+    })
     private Grade grade;
 
     @Column(name = "valor_momento_compra", precision = 10, scale = 2, nullable = false)

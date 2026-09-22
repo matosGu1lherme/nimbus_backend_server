@@ -32,7 +32,11 @@ public class PedidoItem {
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "produto_id", referencedColumnName = "produto_id", insertable = false, updatable = false, nullable = false),
+            @JoinColumn(name = "numeracao", referencedColumnName = "numeracao", insertable = false, updatable = false, nullable = false)
+    })
     private Grade grade;
 
     @Column(nullable = false)
