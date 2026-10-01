@@ -53,12 +53,7 @@ public class CarrinhoService {
                     CarrinhoItem novoItem= new CarrinhoItem();
                     novoItem.setCarrinho(carrinho);
                     novoItem.setProduto(produto);
-
-                    Grade grade = new Grade();
-                    GradeId gradeId = new GradeId(produto.getId(), itemCarrinhoRequestDto.tamanho());
-                    grade.setId(gradeId);
-
-                    novoItem.setGrade(grade);
+                    novoItem.setNumeracao(itemCarrinhoRequestDto.tamanho());
                     novoItem.setValorMomentoCompra(itemCarrinhoRequestDto.valorMomentoCompra());
 
                     carrinho.getCarrinhoItems().add(novoItem);
