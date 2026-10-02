@@ -32,6 +32,9 @@ public class PedidoItem {
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
+    @JoinColumn(name = "numeracao", nullable = false)
+    private String numeracao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "produto_id", referencedColumnName = "produto_id", insertable = false, updatable = false, nullable = false),
@@ -53,7 +56,7 @@ public class PedidoItem {
 
         pedidoItem.setPedido(pedido);
         pedidoItem.setProduto(produtoItem);
-        pedidoItem.setGrade(itemCarrinho.getGrade());
+        pedidoItem.setNumeracao(itemCarrinho.getNumeracao());
         pedidoItem.setQuantidade(itemCarrinho.getQuantidade());
         pedidoItem.setPrecoUnitario(itemCarrinho.getValorMomentoCompra());
 

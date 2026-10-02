@@ -34,7 +34,7 @@ public class CarrinhoItem {
 
     private Integer quantidade;
 
-    @Column(name = "numeracao")
+    @Column(name = "numeracao", nullable = false)
     private String numeracao;
 
     @ManyToOne(fetch = FetchType.LAZY)
